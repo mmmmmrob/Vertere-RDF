@@ -46,12 +46,12 @@ foreach ($lookup_uris as $lookup) {
 	$entries = $spec->get_subject_property_values($lookup, NS_CONV.'lookup_entry');
 	foreach ($entries as $entry) {
 		$lookup_key = $spec->get_first_literal($entry['value'], NS_CONV.'lookup_key');
-		$lookup_value = $spec->get_first_resource($entry['value'], NS_CONV.'lookup_value');
 		if (isset($lookups[$lookup][$lookup_key])) { abort("Lookup <${lookup}> contained a duplicate key"); }
-		$lookups[$lookup][$lookup_key] = $lookup_value;
+		$lookup_values = $spec->get_subject_property_values($entry['value'], NS_CONV.'lookup_value');
+		if (count($lookup_values) > 1) { abort("Lookup ${lookup} has an entry ${entry['value']} that has more than one lookup value assigned."); }
+		$lookups[$lookup][$lookup_key] = $lookup_values[0];
 	}
 }
-
 $base_uri = $spec->get_first_literal($spec_uri, NS_CONV.'base_uri');
 
 $output_graph = new SimpleGraph();
@@ -69,7 +69,9 @@ while ($record = $reader->next_record()) {
 		if ($spec->has_resource_triple($uri_spec, NS_RDF.'type', NS_CONV.'UriLookupSpec')) {
 			$lookup = $spec->get_first_resource($uri_spec, NS_CONV.'lookup');
 			if (!isset($lookups[$lookup][$record[$source_column]])) { abort("Lookup ${lookup} did not contain a lookup for ${record[$source_column]}"); }
-			$uri = $lookups[$lookup][$record[$source_column]];
+			$lookup_value = $lookups[$lookup][$record[$source_column]];
+			if ($lookup_value['type'] != 'uri') { abort("${lookup} contained values that were not URIs but is used as a URI lookup."); }
+			$uri = $lookup_value['value'];
 		} else {
 			//Gather URI parts
 			$container = $spec->get_first_literal($uri_spec, NS_CONV.'container');
@@ -97,7 +99,7 @@ while ($record = $reader->next_record()) {
 	//Create our statements from the statement specs
 	foreach ( $statement_specs as $statement_spec ) {
 		$subject_from = $spec->get_first_resource($statement_spec, NS_CONV.'subject_from');
-		if (!isset($uris[$subject_from])) { abort("Statement relies on uri_spec ${subject_from} but this has not been generated."); }
+		if (!isset($uris[$subject_from])) { abort("Statement ${statement_spec} relies on uri_spec ${subject_from} but this has not been generated."); }
 		$subject = $uris[$subject_from];
 		$property = $spec->get_first_resource($statement_spec, NS_CONV.'property');
 		if (empty($property)) { abort("${statement_spec} does not contain a property."); }
@@ -106,7 +108,17 @@ while ($record = $reader->next_record()) {
 		$object_from = $spec->get_first_resource($statement_spec, NS_CONV.'object_from');
 		$language = $spec->get_first_literal($statement_spec, NS_CONV.'language');
 		$datatype = $spec->get_first_resource($statement_spec, NS_CONV.'datatype');
-		if ($source_column) {
+		if ($spec->has_resource_triple($statement_spec, NS_RDF.'type', NS_CONV.'StatementLookupSpec')) {
+			$source_column--; //make the source column zero-indexed
+			$lookup = $spec->get_first_resource($statement_spec, NS_CONV.'lookup');
+			if (!isset($lookups[$lookup][$record[$source_column]])) { abort("Lookup ${lookup} did not contain a lookup for ${record[$source_column]}"); }
+			$lookup_value = $lookups[$lookup][$record[$source_column]];
+			if ($lookup_value['type'] == 'uri') {
+				$output_graph->add_resource_triple($subject, $property, $lookup_value['value']);
+			} else {
+				$output_graph->add_literal_triple($subject, $property, $lookup_value['value'], @$lookup_value['lang'], @$lookup_value['datatype']);
+			}
+		} else if ($source_column) {
 			$source_column--; //make the source column zero-indexed
 			$value = $record[$source_column];
 			$output_graph->add_literal_triple($subject, $property, $value, $language, $datatype);
@@ -120,7 +132,7 @@ while ($record = $reader->next_record()) {
 			$value = implode($glue, $values);
 			$output_graph->add_literal_triple($subject, $property, $value, $language, $datatype);
 		} else if ($object_from) {
-			if (!isset($uris[$object_from])) { abort("Statement relies on uri_spec ${object_from} but this has not been generated."); }
+			if (!isset($uris[$object_from])) { abort("Statement ${statement_spec} relies on uri_spec ${object_from} but this has not been generated."); }
 			$object = $uris[$object_from];
 			$output_graph->add_resource_triple($subject, $property, $object);
 		} else {
