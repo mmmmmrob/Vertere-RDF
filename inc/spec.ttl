@@ -9,7 +9,7 @@
 ; conversion:format conversion:CSV
 ; conversion:header_rows 1
 ; conversion:uri_specs <#uri_specs>
-; conversion:property_specs <#property_specs>
+; conversion:statement_specs <#statement_specs>
 ; conversion:base_uri "http://flybydata.com/"
 .
 
@@ -24,7 +24,7 @@
 
 <#airport_uri> a conversion:UriSpec
 ; conversion:container "airports"
-; conversion:source_column 1
+; conversion:source_column 2
 ; conversion:urlify false
 ; conversion:type fly:Airport
 .
@@ -32,7 +32,7 @@
 <#ourairports_url> a conversion:UriSpec
 ; conversion:base_uri "http://www.ourairports.com/airports/"
 ; conversion:append_uri "/"
-; conversion:source_column 1
+; conversion:source_column 2
 ; conversion:urlify false
 ; conversion:type bibo:WebPage
 .
@@ -47,20 +47,32 @@
 ; conversion:base_uri_from <#continent_uri>
 ; conversion:container "countries"
 ; conversion:source_column 9
+; conversion:type fly:Country
 .
 
 <#region_uri> a conversion:UriSpec
+; conversion:base_uri_from <#country_uri>
+; conversion:container "regions"
+; conversion:source_column 10
+; conversion:type fly:Region
 .
 
 <#type_uri> a conversion:UriSpec
+; conversion:source_column 3
+; conversion:container "types"
+; conversion:type rdfs:Class
+.
+
+<#statement_specs> a rdf:Seq
+
 .
 
 <#continents_lookup> a conversion:Lookup
-; rdf:_1 [ conversion:key "AF"; conversion:value <http://flybydata.com/continents/africa> ]
-; rdf:_2 [ conversion:key "AS"; conversion:value <http://flybydata.com/continents/asia> ]
-; rdf:_3 [ conversion:key "EU"; conversion:value <http://flybydata.com/continents/europe> ]
-; rdf:_4 [ conversion:key "NA"; conversion:value <http://flybydata.com/continents/north_america> ]
-; rdf:_5 [ conversion:key "SA"; conversion:value <http://flybydata.com/continents/south_america> ]
-; rdf:_6 [ conversion:key "OC"; conversion:value <http://flybydata.com/continents/oceania> ]
-; rdf:_7 [ conversion:key "AN"; conversion:value <http://flybydata.com/continents/antarctica> ]
+; conversion:lookup_entry [ conversion:lookup_key "AF"; conversion:lookup_value <http://flybydata.com/continents/africa> ]
+; conversion:lookup_entry [ conversion:lookup_key "AS"; conversion:lookup_value <http://flybydata.com/continents/asia> ]
+; conversion:lookup_entry [ conversion:lookup_key "EU"; conversion:lookup_value <http://flybydata.com/continents/europe> ]
+; conversion:lookup_entry [ conversion:lookup_key "NA"; conversion:lookup_value <http://flybydata.com/continents/north_america> ]
+; conversion:lookup_entry [ conversion:lookup_key "SA"; conversion:lookup_value <http://flybydata.com/continents/south_america> ]
+; conversion:lookup_entry [ conversion:lookup_key "OC"; conversion:lookup_value <http://flybydata.com/continents/oceania> ]
+; conversion:lookup_entry [ conversion:lookup_key "AN"; conversion:lookup_value <http://flybydata.com/continents/antarctica> ]
 .
