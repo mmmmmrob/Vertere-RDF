@@ -62,15 +62,22 @@
 
 <#type_uri> a conversion:UriSpec
 ; conversion:source_column 3
-; conversion:container "types"
+; conversion:container "schema"
 ; conversion:type rdfs:Class
 .
 
 <#statement_specs> a rdf:Seq
-; rdf:_1 <#name_statement>
-; rdf:_2 <#latitude_statement>
-; rdf:_3 <#longitude_statement>
-; rdf:_4 <#latlong_statement>
+; rdf:_1 <#type_statement>
+; rdf:_2 <#name_statement>
+; rdf:_3 <#latitude_statement>
+; rdf:_4 <#longitude_statement>
+; rdf:_5 <#latlong_statement>
+.
+
+<#type_statement> a conversion:StatementSpec
+; conversion:subject_from <#airport_uri>
+; conversion:property rdf:type
+; conversion:object_from <#type_uri>
 .
 
 <#name_statement> a conversion:StatementSpec

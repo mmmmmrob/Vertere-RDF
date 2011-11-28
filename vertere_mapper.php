@@ -103,9 +103,13 @@ while ($record = $reader->next_record()) {
 		if (empty($property)) { abort("${statement_spec} does not contain a property."); }
 		$source_column = $spec->get_first_literal($statement_spec, NS_CONV.'source_column');
 		$source_column_seq = $spec->get_first_resource($statement_spec, NS_CONV.'source_columns');
+		$object_from = $spec->get_first_resource($statement_spec, NS_CONV.'object_from');
+		$language = $spec->get_first_literal($statement_spec, NS_CONV.'language');
+		$datatype = $spec->get_first_resource($statement_spec, NS_CONV.'datatype');
 		if ($source_column) {
 			$source_column--; //make the source column zero-indexed
 			$value = $record[$source_column];
+			$output_graph->add_literal_triple($subject, $property, $value, $language, $datatype);
 		} else if ($source_column_seq) {
 			$source_columns = $spec->get_sequence_values($source_column_seq);
 			$values = array();
@@ -114,13 +118,15 @@ while ($record = $reader->next_record()) {
 			}
 			$glue = $spec->get_first_literal($statement_spec, NS_CONV.'source_column_glue');
 			$value = implode($glue, $values);
+			$output_graph->add_literal_triple($subject, $property, $value, $language, $datatype);
+		} else if ($object_from) {
+			if (!isset($uris[$object_from])) { abort("Statement relies on uri_spec ${object_from} but this has not been generated."); }
+			$object = $uris[$object_from];
+			$output_graph->add_resource_triple($subject, $property, $object);
 		} else {
-			abort("$statement_spec does not specify source column(s)");
+			abort("$statement_spec does not specify source column(s) or object uri");
 		}
-		$language = $spec->get_first_literal($statement_spec, NS_CONV.'language');
-		$datatype = $spec->get_first_resource($statement_spec, NS_CONV.'datatype');
 		//if (!empty($datatype)) { Vertere::validate_for_datatype(); }
-		$output_graph->add_literal_triple($subject, $property, $value, $language, $datatype);
 		
 	}
 	echo $output_graph->to_ntriples();
