@@ -33,6 +33,12 @@ if (empty($uri_spec_seq)) { abort('Unable to find any sequence of uris to create
 $uri_specs = $spec->get_sequence_values($uri_spec_seq);
 if (empty($uri_specs)) { abort('Unable to find any sequence of uris to create'); }
 
+//Find statement specs
+$statement_spec_seq = $spec->get_first_resource($spec_uri, NS_CONV.'statement_specs');
+if (empty($statement_spec_seq)) { abort('Unable to find any sequence of statements to create'); }
+$statement_specs = $spec->get_sequence_values($statement_spec_seq);
+if (empty($statement_specs)) { abort('Unable to find any sequence of statements to create'); }
+
 //Make lookups quicker by banging them into a PHP array
 $lookups = array();
 $lookup_uris = $spec->get_subjects_of_type(NS_CONV.'Lookup');
@@ -59,8 +65,7 @@ while ($record = $reader->next_record()) {
 	//Create our URIs and keep them for the property processing
 	foreach ( $uri_specs as $uri_spec ) {
 		$source_column = $spec->get_first_literal($uri_spec, NS_CONV.'source_column');
-		//make the source column zero-indexed
-		$source_column--;
+		$source_column--; //make the source column zero-indexed
 		if ($spec->has_resource_triple($uri_spec, NS_RDF.'type', NS_CONV.'UriLookupSpec')) {
 			$lookup = $spec->get_first_resource($uri_spec, NS_CONV.'lookup');
 			if (!isset($lookups[$lookup][$record[$source_column]])) { abort("Lookup ${lookup} did not contain a lookup for ${record[$source_column]}"); }
@@ -87,6 +92,36 @@ while ($record = $reader->next_record()) {
 			$output_graph->add_resource_triple($uri, NS_RDF.'type', $type);
 		}
 		$uris[$uri_spec] = $uri;
+	}
+	
+	//Create our statements from the statement specs
+	foreach ( $statement_specs as $statement_spec ) {
+		$subject_from = $spec->get_first_resource($statement_spec, NS_CONV.'subject_from');
+		if (!isset($uris[$subject_from])) { abort("Statement relies on uri_spec ${subject_from} but this has not been generated."); }
+		$subject = $uris[$subject_from];
+		$property = $spec->get_first_resource($statement_spec, NS_CONV.'property');
+		if (empty($property)) { abort("${statement_spec} does not contain a property."); }
+		$source_column = $spec->get_first_literal($statement_spec, NS_CONV.'source_column');
+		$source_column_seq = $spec->get_first_resource($statement_spec, NS_CONV.'source_columns');
+		if ($source_column) {
+			$source_column--; //make the source column zero-indexed
+			$value = $record[$source_column];
+		} else if ($source_column_seq) {
+			$source_columns = $spec->get_sequence_values($source_column_seq);
+			$values = array();
+			foreach($source_columns as $source_column) {
+				$values[] = $record[$source_column - 1];
+			}
+			$glue = $spec->get_first_literal($statement_spec, NS_CONV.'source_column_glue');
+			$value = implode($glue, $values);
+		} else {
+			abort("$statement_spec does not specify source column(s)");
+		}
+		$language = $spec->get_first_literal($statement_spec, NS_CONV.'language');
+		$datatype = $spec->get_first_resource($statement_spec, NS_CONV.'datatype');
+		//if (!empty($datatype)) { Vertere::validate_for_datatype(); }
+		$output_graph->add_literal_triple($subject, $property, $value, $language, $datatype);
+		
 	}
 	echo $output_graph->to_ntriples();
 	$output_graph->remove_all_triples();
