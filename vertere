@@ -1,0 +1,10 @@
+#!/usr/bin/env php
+<?php
+
+if (count($argv) != 3) {
+	die ("Usage: vertere input_filename spec_filename\n\n");
+}
+
+$input_file = $argv[1];
+$spec_file = $argv[2];
+

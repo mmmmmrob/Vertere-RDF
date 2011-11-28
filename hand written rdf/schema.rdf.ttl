@@ -1,0 +1,21 @@
+@prefix fly: <http://flybydata.com/schema/> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix dbpprop: <http://dbpedia.org/property/> .
+
+fly: a owl:Ontology
+.
+
+fly:Airport a rdfs:Class
+; rdfs:label "Airport"
+; owl:sameAs schema:Airport
+.
+
+fly:icao_code a rdf:Property
+; rdfs:label "ICAO Code"
+; foaf:primaryTopicOf <http://en.wikipedia.org/wiki/International_Civil_Aviation_Organization_airport_code>
+; owl:sameAs dbprop:icao
+.
+

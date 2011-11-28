@@ -1,0 +1,64 @@
+ function set_request_factory($request_factory) {
+ function set_namespace_mapping($prefix, $uri) {
+ function qname_to_uri($qname) {
+ function uri_to_qname($uri) {
+ function get_prefix($ns) {
+ function add_labelling_property($p)  {
+ function update_prefix_mappings() {
+ function make_resource_array($resource) {
+ function add_resource_triple($s, $p, $o) {
+ function add_literal_triple($s, $p, $o, $lang = null, $dt = null) {
+ function get_triples() {
+ function get_index() {
+ function to_rdfxml() {
+ function to_turtle() {
+ function to_ntriples() {
+ function to_json() {
+ function get_valid_id($s) {
+ function get_link_href($s) {
+ function get_link_id($s) {
+ function to_html($s = null, $guess_labels = true) {
+ function get_first_literal($s, $p, $default = null, $preferred_language = null) {
+ function get_first_resource($s, $p, $default = null) {
+ function remove_resource_triple( $s, $p, $o) {
+ function remove_literal_triple( $s, $p, $o) {
+ function remove_triples_about($s) {
+ function from_rdfxml($rdfxml, $base='') {
+ function from_json($json) {
+ function add_json($json) {
+ function get_parser_errors(){
+ function add_rdf($rdf=false, $base='') {
+ function add_rdfxml($rdfxml, $base='') {
+ function from_turtle($turtle, $base='') {
+ function add_turtle($turtle, $base='') {
+ function from_rdfa($html, $base='') {
+ function add_rdfa($html, $base='') {
+ function add_graph($g) {
+ function has_resource_triple($s, $p, $o) {
+ function has_literal_triple($s, $p, $o, $lang = null, $dt = null) {
+ function get_resource_triple_values($s, $p) {
+ function get_literal_triple_values($s, $p) {
+ function get_subject_property_values($s, $p) {
+ function get_subject_subgraph($s) {
+ function get_subjects() {
+ function get_subjects_of_type($t) {
+ function get_subjects_where_resource($p, $o) {
+ function get_subjects_where_literal($p, $o) {
+ function get_subject_properties($s, $distinct = TRUE) {
+ function subject_has_property($s, $p) {
+ function has_triples_about($s) {
+ function remove_property_values($s, $p) {
+ function remove_all_triples() {
+ function is_empty() {
+ function get_label($resource_uri, $capitalize = false, $use_qnames = FALSE) {
+ function get_inverse_label($resource_uri, $capitalize = false, $use_qnames = FALSE) {
+ function get_description($resource_uri = null) {
+ function reify($resources, $nodeID_prefix='Statement')
+ function diff(){
+ function merge(){
+ function replace_resource($look_for, $replace_with) {
+ function read_data($uri_list, $include_response = FALSE) {
+ function get_list_values($listUri) {
+ function get_sequence_values($sequenceUri) {
+ function skolemise_bnodes($urispace)
+ function get_bnodes()

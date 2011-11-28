@@ -1,0 +1,66 @@
+@prefix bibo: <http://example.com/bibo#> .
+@prefix conversion: <http://example.com/schema/data_conversion#> .
+@prefix fly: <http://flybydata.com/schema/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<#> a conversion:Spec
+; conversion:format conversion:CSV
+; conversion:header_rows 1
+; conversion:uri_specs <#uri_specs>
+; conversion:property_specs <#property_specs>
+; conversion:base_uri "http://flybydata.com/"
+.
+
+<#uri_specs> a rdf:Seq
+; rdf:_1 <#airport_uri>
+; rdf:_2 <#ourairports_url>
+; rdf:_3 <#continent_uri>
+; rdf:_4 <#country_uri>
+; rdf:_5 <#region_uri>
+; rdf:_6 <#type_uri>
+.
+
+<#airport_uri> a conversion:UriSpec
+; conversion:container "airports"
+; conversion:source_column 1
+; conversion:urlify false
+; conversion:type fly:Airport
+.
+
+<#ourairports_url> a conversion:UriSpec
+; conversion:base_uri "http://www.ourairports.com/airports/"
+; conversion:append_uri "/"
+; conversion:source_column 1
+; conversion:urlify false
+; conversion:type bibo:WebPage
+.
+
+<#continent_uri> a conversion:UriLookupSpec
+; conversion:lookup <#continents_lookup>
+; conversion:source_column 8
+; conversion:type fly:Continent
+.
+
+<#country_uri> a conversion:UriSpec
+; conversion:base_uri_from <#continent_uri>
+; conversion:container "countries"
+; conversion:source_column 9
+.
+
+<#region_uri> a conversion:UriSpec
+.
+
+<#type_uri> a conversion:UriSpec
+.
+
+<#continents_lookup> a conversion:Lookup
+; rdf:_1 [ conversion:key "AF"; conversion:value <http://flybydata.com/continents/africa> ]
+; rdf:_2 [ conversion:key "AS"; conversion:value <http://flybydata.com/continents/asia> ]
+; rdf:_3 [ conversion:key "EU"; conversion:value <http://flybydata.com/continents/europe> ]
+; rdf:_4 [ conversion:key "NA"; conversion:value <http://flybydata.com/continents/north_america> ]
+; rdf:_5 [ conversion:key "SA"; conversion:value <http://flybydata.com/continents/south_america> ]
+; rdf:_6 [ conversion:key "OC"; conversion:value <http://flybydata.com/continents/oceania> ]
+; rdf:_7 [ conversion:key "AN"; conversion:value <http://flybydata.com/continents/antarctica> ]
+.
