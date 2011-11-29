@@ -66,10 +66,21 @@ while ($record = $reader->next_record()) {
 	foreach ( $uri_specs as $uri_spec ) {
 		$source_column = $spec->get_first_literal($uri_spec, NS_CONV.'source_column');
 		$source_column--; //make the source column zero-indexed
-		if ($spec->has_resource_triple($uri_spec, NS_RDF.'type', NS_CONV.'UriLookupSpec')) {
+		$column_value = $record[$source_column];
+		if (empty($column_value)) { continue; }
+		$column_is_uri = $spec->get_first_literal($uri_spec, NS_CONV.'column_is_uri');
+		$preg_pattern = $spec->get_first_literal($uri_spec, NS_CONV.'preg_pattern');
+		$preg_replace = $spec->get_first_literal($uri_spec, NS_CONV.'preg_replace');
+		if ($preg_pattern && $preg_replace) {
+			$column_value = preg_replace("%${preg_pattern}%", "${preg_replace}", $column_value);
+		}
+
+		if ($column_is_uri) {
+			$uri = $column_value;
+		} else if ($spec->has_resource_triple($uri_spec, NS_RDF.'type', NS_CONV.'UriLookupSpec')) {
 			$lookup = $spec->get_first_resource($uri_spec, NS_CONV.'lookup');
-			if (!isset($lookups[$lookup][$record[$source_column]])) { abort("Lookup ${lookup} did not contain a lookup for ${record[$source_column]}"); }
-			$lookup_value = $lookups[$lookup][$record[$source_column]];
+			if (!isset($lookups[$lookup][$column_value])) { abort("Lookup ${lookup} did not contain a lookup for ${record[$source_column]}"); }
+			$lookup_value = $lookups[$lookup][$column_value];
 			if ($lookup_value['type'] != 'uri') { abort("${lookup} contained values that were not URIs but is used as a URI lookup."); }
 			$uri = $lookup_value['value'];
 		} else {
@@ -83,7 +94,7 @@ while ($record = $reader->next_record()) {
 			$append_uri = $spec->get_first_literal($uri_spec, NS_CONV.'append_uri');
 			$base_to_use = $base_uri_override ? $base_uri_override : $base_uri;
 			$base_to_use = $base_uri_from ? $uris[$base_uri_from] : $base_to_use;
-			$uri_part = $urlify == "true" ? Vertere::urlify($record[$source_column]) : $record[$source_column];
+			$uri_part = $urlify == "true" ? Vertere::urlify($column_value) : $column_value;
 			//Check base uri finishes with a slash or a hash
 			if (!preg_match('%[/#]$%', $base_to_use)) { $base_to_use .= '/'; }
 			//Compose URI
@@ -99,7 +110,7 @@ while ($record = $reader->next_record()) {
 	//Create our statements from the statement specs
 	foreach ( $statement_specs as $statement_spec ) {
 		$subject_from = $spec->get_first_resource($statement_spec, NS_CONV.'subject_from');
-		if (!isset($uris[$subject_from])) { abort("Statement ${statement_spec} relies on uri_spec ${subject_from} but this has not been generated."); }
+		if (!isset($uris[$subject_from])) { continue; } //If no subject, then can't make statement
 		$subject = $uris[$subject_from];
 		$property = $spec->get_first_resource($statement_spec, NS_CONV.'property');
 		if (empty($property)) { abort("${statement_spec} does not contain a property."); }
@@ -132,7 +143,7 @@ while ($record = $reader->next_record()) {
 			$value = implode($glue, $values);
 			$output_graph->add_literal_triple($subject, $property, $value, $language, $datatype);
 		} else if ($object_from) {
-			if (!isset($uris[$object_from])) { abort("Statement ${statement_spec} relies on uri_spec ${object_from} but this has not been generated."); }
+			if (!isset($uris[$object_from])) { continue; } //If no object then can't make statement
 			$object = $uris[$object_from];
 			$output_graph->add_resource_triple($subject, $property, $object);
 		} else {

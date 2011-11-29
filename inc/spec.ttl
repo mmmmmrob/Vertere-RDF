@@ -4,29 +4,30 @@
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix georss: <http://www.georss.org/georss/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix spacerel: <http://data.ordnancesurvey.co.uk/ontology/spatialrelations/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-#id
-#ident
-#type
-#name
-#latitude_deg
-#longitude_deg
-#elevation_ft
-#continent
-#iso_country
-#iso_region
-#municipality
-#scheduled_service
-#gps_code
-#iata_code
-#local_code
-#home_link
-#wikipedia_link
-#keywords
+# 1    id
+# 2    ident
+# 3    type
+# 4    name
+# 5    latitude_deg
+# 6    longitude_deg
+# 7    elevation_ft
+# 8    continent
+# 9    iso_country
+# 10   iso_region
+# 11   municipality
+# 12   scheduled_service
+# 13   gps_code
+# 14   iata_code
+# 15   local_code
+# 16   home_link
+# 17   wikipedia_link
+# 18   keywords
 
 <#> a conversion:Spec
 ; conversion:format conversion:CSV
@@ -44,6 +45,8 @@
 ; rdf:_5 <#region_uri>
 ; rdf:_6 <#type_uri>
 ; rdf:_7 <#municipality_uri>
+; rdf:_8 <#dbpedia_uri>
+; rdf:_9 <#wikipedia_url>
 .
 
 <#airport_uri> a conversion:UriSpec
@@ -99,6 +102,19 @@
 ; conversion:type rdfs:Class
 .
 
+<#dbpedia_uri> a conversion:UriSpec
+; conversion:source_column 17
+; conversion:preg_pattern "^http://en.wikipedia.org/wiki/(.*)"
+; conversion:preg_replace "http://dbpedia.org/resource/${1}"
+; conversion:column_is_uri true
+.
+
+<#wikipedia_url> a conversion:UriSpec
+; conversion:source_column 17
+; conversion:column_is_uri true
+; conversion:type bibo:WebPage
+.
+
 <#statement_specs> a rdf:Seq
 ; rdf:_1  <#airport_type>
 ; rdf:_2  <#airport_ourairports>
@@ -115,6 +131,8 @@
 ; rdf:_13 <#region_within_country>
 ; rdf:_14 <#country_within_continent>
 ; rdf:_15 <#airport_scheduled_service>
+; rdf:_16 <#airport_wikipedia>
+; rdf:_17 <#airport_dbpedia>
 .
 
 <#airport_type> a conversion:StatementSpec
@@ -210,6 +228,18 @@
 ; conversion:property fly:scheduled_service
 ; conversion:source_column 12
 ; conversion:lookup <#boolean_lookup>
+.
+
+<#airport_wikipedia> a conversion:StatementSpec
+; conversion:subject_from <#airport_uri>
+; conversion:property foaf:isPrimaryTopicOf
+; conversion:object_from <#wikipedia_url>
+.
+
+<#airport_dbpedia> a conversion:StatementSpec
+; conversion:subject_from <#airport_uri>
+; conversion:property owl:sameAs
+; conversion:object_from <#dbpedia_uri>
 .
 
 <#continents_lookup> a conversion:Lookup
