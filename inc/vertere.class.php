@@ -2,6 +2,6 @@
 
 class Vertere {
 	public static function urlify($part) {
-		return strtolower($part);
+		return rawurlencode(str_replace(' ', '_', strtolower(trim($part))));
 	}
 }

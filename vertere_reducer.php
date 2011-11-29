@@ -1,12 +1,12 @@
 #!/usr/bin/env php
 <?php
 ini_set('memory_limit', '2048M');
-define('LIB_DIR', dirname(dirname(__FILE__)) . '/lib/');
+define('LIB_DIR', dirname(__FILE__) . '/lib/');
 define('MORIARTY_DIR', LIB_DIR.'moriarty/');
 define('MORIARTY_ARC_DIR', LIB_DIR.'arc/');
 include_once MORIARTY_DIR.'moriarty.inc.php';
 include_once MORIARTY_DIR.'simplegraph.class.php';
-include_once 'sequencegraph.class.php';
+include_once 'inc/sequencegraph.class.php';
 
 $graph = new SequenceGraph();
 $previous_subject = null;

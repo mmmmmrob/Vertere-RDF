@@ -14,7 +14,8 @@ include_once 'inc/diagnostics.php';
 define('NS_CONV', 'http://example.com/schema/data_conversion#');
 define('NS_RDF', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
 
-$spec_file = file_get_contents('inc/spec.ttl');
+$spec_file_name = $argv[1];
+$spec_file = file_get_contents($spec_file_name);
 $spec = new SimpleGraph();
 $spec->from_turtle($spec_file);
 
@@ -106,6 +107,8 @@ while ($record = $reader->next_record()) {
 		}
 		$uris[$uri_spec] = $uri;
 	}
+	echo $output_graph->to_ntriples();
+	$output_graph->remove_all_triples();
 	
 	//Create our statements from the statement specs
 	foreach ( $statement_specs as $statement_spec ) {
