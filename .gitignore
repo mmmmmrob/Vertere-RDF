@@ -5,3 +5,5 @@ geoplanet/licence.txt
 geoplanet/*.tsv
 
 geoplanet/Readme.txt
+
+tmp.rdf.nt
