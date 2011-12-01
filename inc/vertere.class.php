@@ -1,4 +1,6 @@
 <?php
+include_once MORIARTY_DIR.'moriarty.inc.php';
+include_once MORIARTY_DIR.'simplegraph.class.php';
 
 class Vertere {
 
@@ -17,8 +19,16 @@ class Vertere {
 	
 	public function convert_array_to_graph($record) {
 		$uris = $this->create_uris($record);
+		// $graph = new SimpleGraph();
+		// $this->create_relationships($graph, $uris, $record);
 		return $uris;
 	}
+	
+	// private function create_relationships(&$graph, $uris, $record) {
+	// 	foreach ( $this->resources as $resource ) {
+	// 		
+	// 	}
+	// }
 	
 	private function create_uris($record) {
 		$uris = array();
@@ -55,7 +65,7 @@ class Vertere {
 		
 		//Decide on base_uri
 		$base_uri = $spec->get_first_literal($identity, NS_CONV.'base_uri');
-		if ($base_uri == null) { $base_uri = $this->base_uri; }
+		if ($base_uri === null) { $base_uri = $this->base_uri; }
 
 		//Decide if the resource should be nested (overrides the base_uri)
 		$nest_under = $spec->get_first_resource($identity, NS_CONV.'nest_under');
@@ -69,9 +79,45 @@ class Vertere {
 		
 		$container = $spec->get_first_literal($identity, NS_CONV.'container');
 		if (!empty($container) && !preg_match('%[/#]$%', $container)) { $container .= '/'; }
+		
 		//$processes = $spec->get_first_resource($identity, NS_CONV.'process');
+		$source_value = $this->process($identity, $source_value);
 
 		$uris[$resource] = "${base_uri}${container}${source_value}";
+	}
+	
+	public function process($resource, $value) {
+		$processes = $this->spec->get_first_resource($resource, NS_CONV.'process');
+		if ($processes != null) {
+			$process_steps = $this->spec->get_list_values($processes);
+			foreach ($process_steps as $step) {
+				switch ($step) {
+					case NS_CONV.'normalise':
+						$value = strtolower(str_replace(' ', '_', trim($value)));
+						break;
+
+					case NS_CONV.'title_case':
+						$value = ucwords($value);
+						break;
+
+					case NS_CONV.'regex':
+						$regex_pattern = $this->spec->get_first_literal($resource, NS_CONV.'regex_match');
+						foreach (array('%','/','@','!','^',',','.','-') as $candidate_delimeter) {
+							if(strpos($candidate_delimeter, $regex_pattern) === false) {
+								$delimeter = $candidate_delimeter;
+								break;
+							}
+						}
+						$regex_output = $this->spec->get_first_literal($resource, NS_CONV.'regex_output');
+						$value = preg_replace("${delimeter}${regex_pattern}${delimeter}", $regex_output, $value);
+						break;
+
+					default:
+						throw new Exception("Unknown process requested: ${step}");
+				}
+			}
+		}
+		return $value;
 	}
 	
 	public function lookup($lookup, $key) {

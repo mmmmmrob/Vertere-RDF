@@ -32,7 +32,7 @@
 <#> a :Spec
 ; :format :CSV
 ; :header_rows 1
-; :resource <#airport>, <#airport_type>, <#continent>, <#country>, <#region>, <#municipality>, <#wikipedia_page>, <#dbpedia_resource>, <#ourairports_page>
+; :resource <#airport>, <#airport_type>, <#country>, <#continent>, <#region>, <#municipality>, <#wikipedia_page>, <#dbpedia_resource>, <#ourairports_page>
 ; :base_uri "http://flybydata.com/"
 .
 
@@ -95,7 +95,7 @@
 
 <#municipality> a :Resource
 ; :type fly:Municipality
-; :identity [ :source_column 11; :container "municipalities"; :nest_under <#region> ]
+; :identity [ :source_column 11; :container "municipalities"; :nest_under <#region>; :process ( :normalise :title_case ) ]
 ; :relationship [ :property spacerel:within; :object_from <#region> ]
 ; :property [ :property rdfs:label; :source_column 11 ]
 .
@@ -122,7 +122,7 @@
 	:source_column 2;
 	:base_uri "";
 	:process ( :regex );
-	:regex_match "(.*)";
+	:regex_match "^(.*)$";
 	:regex_output "http://www.ourairports.com/airports/${1}/";
 	]
 .
