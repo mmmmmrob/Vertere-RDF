@@ -32,7 +32,7 @@
 <#> a :Spec
 ; :format :CSV
 ; :header_rows 1
-; :resources <#airport>, <#airport_type>, <#continent>, <#country>, <#region>, <#municipality>, <#wikipedia_page>, <#dbpedia_resource>, <#ourairports_page>
+; :resource <#airport>, <#airport_type>, <#continent>, <#country>, <#region>, <#municipality>, <#wikipedia_page>, <#dbpedia_resource>, <#ourairports_page>
 ; :base_uri "http://flybydata.com/"
 .
 
@@ -72,42 +72,42 @@
 
 <#continent> a :Resource
 ; :type fly:Continent
-; identity [ :source_column 8; :lookup <#continents_lookup>; :container "continents" ]
-; relationship [ :property spacerel:contains; :object_from <#country> ]
-; property [ :property foaf:name; :source_column 8; :lookup <#continents_name_lookup> ]
+; :identity [ :source_column 8; :lookup <#continents_lookup> ]
+; :relationship [ :property spacerel:contains; :object_from <#country> ]
+; :property [ :property foaf:name; :source_column 8; :lookup <#continents_name_lookup> ]
 .
 
 <#country> a :Resource
 ; :type fly:Country
-; identity [ :source_column 9; :container "countries"; :nest_under <#continent> ]
-; relationship [ :property spacerel:within; :object_from <#continent> ]
-; relationship [ :property spacerel:contains; :object_from <#region> ]
-; property [ :property fly:iso_code; :source_column 9 ]
+; :identity [ :source_column 9; :container "countries"; :nest_under <#continent> ]
+; :relationship [ :property spacerel:within; :object_from <#continent> ]
+; :relationship [ :property spacerel:contains; :object_from <#region> ]
+; :property [ :property fly:iso_code; :source_column 9 ]
 .
 
 <#region> a :Resource
 ; :type fly:Region
-; identity [ :source_column 10; :container "regions"; :nest_under <#country> ]
-; relationship [ :property spacerel:within; :object_from <#country> ]
-; relationship [ :property spacerel:contains; :object_from <#municipality> ]
-; property [ :property fly:iso_code; :source_column 10 ]
+; :identity [ :source_column 10; :container "regions"; :nest_under <#country> ]
+; :relationship [ :property spacerel:within; :object_from <#country> ]
+; :relationship [ :property spacerel:contains; :object_from <#municipality> ]
+; :property [ :property fly:iso_code; :source_column 10 ]
 .
 
 <#municipality> a :Resource
 ; :type fly:Municipality
-; identity [ :source_column 11; :container "municipalities"; :nest_under <#region> ]
-; relationship [ :property spacerel:within; :object_from <#region> ]
-; property [ :property rdfs:label; :source_column 11 ]
+; :identity [ :source_column 11; :container "municipalities"; :nest_under <#region> ]
+; :relationship [ :property spacerel:within; :object_from <#region> ]
+; :property [ :property rdfs:label; :source_column 11 ]
 .
 
 <#wikipedia_page> a :Resource
 ; :type bibo:Webpage
-; identity [ :source_column 17; :base_uri "" ]
+; :identity [ :source_column 17; :base_uri "" ]
 .
 
 <#dbpedia_resource> a :Resource
 ; :type bibo:Webpage
-; identity [
+; :identity [
 	:source_column 17;
 	:base_uri "";
 	:process ( :regex );
@@ -118,7 +118,7 @@
 
 <#ourairports_page> a :Resource
 ; :type bibo:Webpage
-; identity [
+; :identity [
 	:source_column 2;
 	:base_uri "";
 	:process ( :regex );

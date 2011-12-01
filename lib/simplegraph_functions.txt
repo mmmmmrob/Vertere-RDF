@@ -51,6 +51,7 @@
  function remove_resource_triple( $s, $p, $o) {
  function remove_triples_about($s) {
  function replace_resource($look_for, $replace_with) {
+ function resource_is_of_type($s, $t) {
  function set_namespace_mapping($prefix, $uri) {
  function set_request_factory($request_factory) {
  function skolemise_bnodes($urispace)
