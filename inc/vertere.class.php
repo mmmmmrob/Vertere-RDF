@@ -19,16 +19,84 @@ class Vertere {
 	
 	public function convert_array_to_graph($record) {
 		$uris = $this->create_uris($record);
-		// $graph = new SimpleGraph();
-		// $this->create_relationships($graph, $uris, $record);
-		return $uris;
+		$graph = new SimpleGraph();
+		$this->create_relationships($graph, $uris);
+		$this->create_attributes($graph, $uris, $record);
+		return $graph;
 	}
 	
-	// private function create_relationships(&$graph, $uris, $record) {
-	// 	foreach ( $this->resources as $resource ) {
-	// 		
-	// 	}
-	// }
+	private function create_attributes(&$graph, $uris, $record) {
+		foreach ( $this->resources as $resource ) {
+			$attributes = $this->spec->get_resource_triple_values($resource, NS_CONV.'attribute');
+			foreach ($attributes as $attribute) {
+				$this->create_attribute($graph, $uris, $record, $resource, $attribute);
+			}
+		}
+	}
+	
+	private function create_attribute(&$graph, $uris, $record, $resource, $attribute) {
+		$subject = $uris[$resource];
+		$property = $this->spec->get_first_resource($attribute, NS_CONV.'property');
+		$language = $this->spec->get_first_literal($attribute, NS_CONV.'language');
+		$datatype = $this->spec->get_first_resource($attribute, NS_CONV.'datatype');
+
+		$source_column = $this->spec->get_first_literal($attribute, NS_CONV.'source_column');
+		$source_columns = $this->spec->get_first_resource($attribute, NS_CONV.'source_columns');
+		if ($source_column) {
+			$source_column--;
+			$source_value = $record[$source_column];
+		} else if ($source_columns) {
+			$source_columns = $this->spec->get_list_values($source_columns);
+			$glue = $this->spec->get_first_literal($attribute, NS_CONV.'source_column_glue');
+			$source_values = array();
+			foreach ($source_columns as $source_column) {
+				$source_column = $source_column['value'];
+				$source_column--;
+				$source_values[] = $record[$source_column];
+			}
+			$source_value = implode($glue, $source_values);
+		} else {
+			return;
+		}
+		
+		if (empty($source_value)) { return; }
+
+		$lookup = $this->spec->get_first_resource($attribute, NS_CONV.'lookup');
+		if($lookup != null) {
+			$lookup_value = $this->lookup($lookup, $source_value);
+			if ($lookup_value != null && $lookup_value['type'] == 'uri') {
+				$graph->add_resource_triple($subject, $property, $lookup_value['value']);
+				return;
+			} else {
+				$source_value = $lookup_value['value'];
+			}
+		}
+		
+		$source_value = $this->process($attribute, $source_value);
+		
+		$graph->add_literal_triple($subject, $property, $source_value, $language, $datatype);
+		
+		
+	}
+	
+	private function create_relationships(&$graph, $uris) {
+		foreach ( $this->resources as $resource ) {
+			$relationships = $this->spec->get_resource_triple_values($resource, NS_CONV.'relationship');
+			foreach ($relationships as $relationship) {
+				$this->create_relationship($graph, $uris, $resource, $relationship);
+			}
+		}
+	}
+	
+	private function create_relationship(&$graph, $uris, $resource, $relationship) {
+		$subject = $uris[$resource];
+		$property = $this->spec->get_first_resource($relationship, NS_CONV.'property');
+		$object_from = $this->spec->get_first_resource($relationship, NS_CONV.'object_from');
+		$object = $uris[$object_from];
+		if ($subject && $property && $object) {
+			$graph->add_resource_triple($subject, $property, $object);
+		}
+	}
 	
 	private function create_uris($record) {
 		$uris = array();
@@ -80,7 +148,6 @@ class Vertere {
 		$container = $spec->get_first_literal($identity, NS_CONV.'container');
 		if (!empty($container) && !preg_match('%[/#]$%', $container)) { $container .= '/'; }
 		
-		//$processes = $spec->get_first_resource($identity, NS_CONV.'process');
 		$source_value = $this->process($identity, $source_value);
 
 		$uris[$resource] = "${base_uri}${container}${source_value}";
@@ -91,7 +158,7 @@ class Vertere {
 		if ($processes != null) {
 			$process_steps = $this->spec->get_list_values($processes);
 			foreach ($process_steps as $step) {
-				switch ($step) {
+				switch ($step['value']) {
 					case NS_CONV.'normalise':
 						$value = strtolower(str_replace(' ', '_', trim($value)));
 						break;

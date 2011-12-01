@@ -48,7 +48,7 @@
 	[ :property foaf:isPrimaryTopicOf; :object_from <#wikipedia_page> ],
 	[ :property foaf:isPrimaryTopicOf; :object_from <#ourairports_page> ],
 	[ :property owl:sameAs; :object_from <#dbpedia_resource> ]
-; :property
+; :attribute
 	[ :property geo:lat; :source_column 5; :datatype xsd:float ],
 	[ :property geo:long; :source_column 6; :datatype xsd:float ],
 	[ :property georss:point; :source_columns (5 6); :source_column_glue " " ],
@@ -60,7 +60,7 @@
 <#airport_type> a :Resource
 ; :identity [ :source_column 3; :process ( :normalise :title_case ); :container "schema" ]
 ; :type rdfs:Class
-; :property
+; :attribute
 	[
 		:property rdfs:label;
 		:source_column 3;
@@ -74,7 +74,7 @@
 ; :type fly:Continent
 ; :identity [ :source_column 8; :lookup <#continents_lookup> ]
 ; :relationship [ :property spacerel:contains; :object_from <#country> ]
-; :property [ :property foaf:name; :source_column 8; :lookup <#continents_name_lookup> ]
+; :attribute [ :property foaf:name; :source_column 8; :lookup <#continents_name_lookup> ]
 .
 
 <#country> a :Resource
@@ -82,7 +82,7 @@
 ; :identity [ :source_column 9; :container "countries"; :nest_under <#continent> ]
 ; :relationship [ :property spacerel:within; :object_from <#continent> ]
 ; :relationship [ :property spacerel:contains; :object_from <#region> ]
-; :property [ :property fly:iso_code; :source_column 9 ]
+; :attribute [ :property fly:iso_code; :source_column 9 ]
 .
 
 <#region> a :Resource
@@ -90,14 +90,14 @@
 ; :identity [ :source_column 10; :container "regions"; :nest_under <#country> ]
 ; :relationship [ :property spacerel:within; :object_from <#country> ]
 ; :relationship [ :property spacerel:contains; :object_from <#municipality> ]
-; :property [ :property fly:iso_code; :source_column 10 ]
+; :attribute [ :property fly:iso_code; :source_column 10 ]
 .
 
 <#municipality> a :Resource
 ; :type fly:Municipality
-; :identity [ :source_column 11; :container "municipalities"; :nest_under <#region>; :process ( :normalise :title_case ) ]
+; :identity [ :source_column 11; :container "municipalities"; :nest_under <#region>; :process ( :normalise ) ]
 ; :relationship [ :property spacerel:within; :object_from <#region> ]
-; :property [ :property rdfs:label; :source_column 11 ]
+; :attribute [ :property rdfs:label; :source_column 11 ]
 .
 
 <#wikipedia_page> a :Resource

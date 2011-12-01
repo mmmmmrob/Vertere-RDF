@@ -38,7 +38,6 @@ for ($i = 0; $i < $header_rows; $i++) { $reader->next_record(); }
 //Create graph from records
 while ($record = $reader->next_record()) {
 	$output_graph = $vertere->convert_array_to_graph($record);
-	print_r($output_graph);
-	// echo $output_graph->to_ntriples();
-	// $output_graph->remove_all_triples();
+	echo $output_graph->to_turtle();
+	$output_graph->remove_all_triples();
 }
