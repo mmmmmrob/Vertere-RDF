@@ -258,10 +258,3 @@
 ; conversion:lookup_entry [ conversion:lookup_key "no"; conversion:lookup_value "false"^^xsd:boolean ]
 ; conversion:lookup_entry [ conversion:lookup_key "false"; conversion:lookup_value "false"^^xsd:boolean ]
 .
-
-
-
-
-
-
-
