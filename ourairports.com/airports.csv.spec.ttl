@@ -1,5 +1,5 @@
+@prefix : <http://example.com/schema/data_conversion#> .
 @prefix bibo: <http://example.com/bibo#> .
-@prefix conversion: <http://example.com/schema/data_conversion#> .
 @prefix fly: <http://flybydata.com/schema/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
@@ -29,232 +29,137 @@
 # 17   wikipedia_link
 # 18   keywords
 
-<#> a conversion:Spec
-; conversion:format conversion:CSV
-; conversion:header_rows 1
-; conversion:uri_specs <#uri_specs>
-; conversion:statement_specs <#statement_specs>
-; conversion:base_uri "http://flybydata.com/"
+<#> a :Spec
+; :format :CSV
+; :header_rows 1
+; :expected_header ( "\"id\",\"ident\",\"type\",\"name\",\"latitude_deg\",\"longitude_deg\",\"elevation_ft\",\"continent\",\"iso_country\",\"iso_region\",\"municipality\",\"scheduled_service\",\"gps_code\",\"iata_code\",\"local_code\",\"home_link\",\"wikipedia_link\",\"keywords\"" )
+; :resource <#airport>, <#airport_type>, <#country>, <#continent>, <#region>, <#municipality>, <#wikipedia_page>, <#dbpedia_resource>, <#ourairports_page>
+; :base_uri "http://flybydata.com/"
 .
 
-<#uri_specs> a rdf:Seq
-; rdf:_1 <#airport_uri>
-; rdf:_2 <#ourairports_url>
-; rdf:_3 <#continent_uri>
-; rdf:_4 <#country_uri>
-; rdf:_5 <#region_uri>
-; rdf:_6 <#type_uri>
-; rdf:_7 <#municipality_uri>
-; rdf:_8 <#dbpedia_uri>
-; rdf:_9 <#wikipedia_url>
+<#airport> a :Resource
+; :identity [ :source_column 2; :container "airports" ]
+; :type fly:Airport
+; :relationship
+	[ :property rdf:type; :object_from <#airport_type> ],
+	[ :property spacerel:within; :object_from <#municipality> ],
+	[ :property spacerel:within; :object_from <#region> ],
+	[ :property spacerel:within; :object_from <#country> ],
+	[ :property spacerel:within; :object_from <#continent> ],
+	[ :property foaf:isPrimaryTopicOf; :object_from <#wikipedia_page> ],
+	[ :property foaf:isPrimaryTopicOf; :object_from <#ourairports_page> ],
+	[ :property owl:sameAs; :object_from <#dbpedia_resource> ]
+; :attribute
+	[ :property geo:lat; :source_column 5; :datatype xsd:float ],
+	[ :property geo:long; :source_column 6; :datatype xsd:float ],
+	[ :property georss:point; :source_columns (5 6); :source_column_glue " " ],
+	[ :property foaf:name; :source_column 4; :language "en" ],
+	[ :property fly:icao_code; :source_column 2 ],
+	[ :property fly:scheduled_service; :source_column 12; :lookup <#boolean_lookup> ]
 .
 
-<#airport_uri> a conversion:UriSpec
-; conversion:container "airports"
-; conversion:source_column 2
-; conversion:urlify false
-; conversion:type fly:Airport
+<#airport_type> a :Resource
+; :identity [ :source_column 3; :process ( :normalise :title_case ); :container "schema" ]
+; :type rdfs:Class
+; :attribute
+	[
+		:property rdfs:label;
+		:source_column 3;
+		:process ( :regex :title_case );
+		:regex_match "_";
+		:regex_output " ";
+	]
 .
 
-<#ourairports_url> a conversion:UriSpec
-; conversion:base_uri "http://www.ourairports.com/airports/"
-; conversion:append_uri "/"
-; conversion:source_column 2
-; conversion:urlify false
-; conversion:type bibo:WebPage
+<#continent> a :Resource
+; :type fly:Continent
+; :identity [ :source_column 8; :lookup <#continents_lookup> ]
+; :relationship [ :property spacerel:contains; :object_from <#country> ]
+; :attribute [ :property foaf:name; :source_column 8; :lookup <#continents_name_lookup> ]
 .
 
-<#continent_uri> a conversion:UriLookupSpec
-; conversion:lookup <#continents_lookup>
-; conversion:source_column 8
-; conversion:urlify false
-; conversion:type fly:Continent
+<#country> a :Resource
+; :type fly:Country
+; :identity [ :source_column 9; :container "countries"; :nest_under <#continent> ]
+; :relationship [ :property spacerel:within; :object_from <#continent> ]
+; :relationship [ :property spacerel:contains; :object_from <#region> ]
+; :attribute [ :property fly:iso_code; :source_column 9 ]
 .
 
-<#country_uri> a conversion:UriSpec
-; conversion:base_uri_from <#continent_uri>
-; conversion:container "countries"
-; conversion:source_column 9
-; conversion:urlify false
-; conversion:type fly:Country
+<#region> a :Resource
+; :type fly:Region
+; :identity [ :source_column 10; :container "regions"; :nest_under <#country> ]
+; :relationship [ :property spacerel:within; :object_from <#country> ]
+; :relationship [ :property spacerel:contains; :object_from <#municipality> ]
+; :attribute [ :property fly:iso_code; :source_column 10 ]
 .
 
-<#region_uri> a conversion:UriSpec
-; conversion:base_uri_from <#country_uri>
-; conversion:container "regions"
-; conversion:source_column 10
-; conversion:urlify false
-; conversion:type fly:Region
+<#municipality> a :Resource
+; :type fly:Municipality
+; :identity [ :source_column 11; :container "municipalities"; :nest_under <#region>; :process ( :normalise ) ]
+; :relationship [ :property spacerel:within; :object_from <#region> ]
+; :attribute [ :property rdfs:label; :source_column 11 ]
 .
 
-<#municipality_uri> a conversion:UriSpec
-; conversion:base_uri_from <#region_uri>
-; conversion:container "municipalities"
-; conversion:source_column 11
-; conversion:urlify true
-; conversion:type fly:Municipality
+<#wikipedia_page> a :Resource
+; :type bibo:Webpage
+; :identity [ :source_column 17; :base_uri "" ]
 .
 
-<#type_uri> a conversion:UriSpec
-; conversion:source_column 3
-; conversion:container "schema"
-; conversion:urlify true
-; conversion:type rdfs:Class
+<#dbpedia_resource> a :Resource
+; :type bibo:Webpage
+; :identity [
+	:source_column 17;
+	:base_uri "";
+	:process ( :regex );
+	:regex_match "http://[^/]*/wiki/(.*)";
+	:regex_output "http://dbpedia.org/resource/${1}";
+	]
 .
 
-<#dbpedia_uri> a conversion:UriSpec
-; conversion:source_column 17
-; conversion:preg_pattern "^http://en.wikipedia.org/wiki/(.*)"
-; conversion:preg_replace "http://dbpedia.org/resource/${1}"
-; conversion:column_is_uri true
+<#ourairports_page> a :Resource
+; :type bibo:Webpage
+; :identity [
+	:source_column 2;
+	:base_uri "";
+	:process ( :regex );
+	:regex_match "^(.*)$";
+	:regex_output "http://www.ourairports.com/airports/${1}/";
+	]
 .
 
-<#wikipedia_url> a conversion:UriSpec
-; conversion:source_column 17
-; conversion:column_is_uri true
-; conversion:type bibo:WebPage
+<#continents_lookup> a :Lookup
+; :lookup_entry [ :lookup_key "AF"; :lookup_value <http://flybydata.com/continents/africa> ]
+; :lookup_entry [ :lookup_key "AS"; :lookup_value <http://flybydata.com/continents/asia> ]
+; :lookup_entry [ :lookup_key "EU"; :lookup_value <http://flybydata.com/continents/europe> ]
+; :lookup_entry [ :lookup_key "NA"; :lookup_value <http://flybydata.com/continents/north_america> ]
+; :lookup_entry [ :lookup_key "SA"; :lookup_value <http://flybydata.com/continents/south_america> ]
+; :lookup_entry [ :lookup_key "OC"; :lookup_value <http://flybydata.com/continents/oceania> ]
+; :lookup_entry [ :lookup_key "AN"; :lookup_value <http://flybydata.com/continents/antarctica> ]
 .
 
-<#statement_specs> a rdf:Seq
-; rdf:_1  <#airport_type>
-; rdf:_2  <#airport_ourairports>
-; rdf:_3  <#airport_name>
-; rdf:_4  <#airport_ident>
-; rdf:_5  <#airport_latitude>
-; rdf:_6  <#airport_longitude>
-; rdf:_7  <#airport_latlong>
-; rdf:_8  <#airport_within_municipality>
-; rdf:_9  <#airport_within_region>
-; rdf:_10 <#airport_within_country>
-; rdf:_11 <#airport_within_continent>
-; rdf:_12 <#municipality_within_region>
-; rdf:_13 <#region_within_country>
-; rdf:_14 <#country_within_continent>
-; rdf:_15 <#airport_scheduled_service>
-; rdf:_16 <#airport_wikipedia>
-; rdf:_17 <#airport_dbpedia>
+<#continents_name_lookup> a :Lookup
+; :lookup_entry [ :lookup_key "AF"; :lookup_value "Africa"@en ]
+; :lookup_entry [ :lookup_key "AS"; :lookup_value "Asia"@en ]
+; :lookup_entry [ :lookup_key "EU"; :lookup_value "Europe"@en ]
+; :lookup_entry [ :lookup_key "NA"; :lookup_value "North America"@en ]
+; :lookup_entry [ :lookup_key "SA"; :lookup_value "South America"@en ]
+; :lookup_entry [ :lookup_key "OC"; :lookup_value "Oceania"@en ]
+; :lookup_entry [ :lookup_key "AN"; :lookup_value "Antarctica"@en ]
 .
 
-<#airport_type> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property rdf:type
-; conversion:object_from <#type_uri>
+<#boolean_lookup> a :Lookup
+; :lookup_entry [ :lookup_key "yes"; :lookup_value "true"^^xsd:boolean ]
+; :lookup_entry [ :lookup_key "true"; :lookup_value "true"^^xsd:boolean ]
+; :lookup_entry [ :lookup_key "no"; :lookup_value "false"^^xsd:boolean ]
+; :lookup_entry [ :lookup_key "false"; :lookup_value "false"^^xsd:boolean ]
 .
 
-<#airport_ourairports> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property foaf:isPrimaryTopicOf
-; conversion:object_from <#ourairports_url>
-.
 
-<#airport_name> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property foaf:name
-; conversion:source_column 4
-; conversion:language "en-us"
-.
 
-<#airport_ident> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property fly:icao_code
-; conversion:source_column 2
-.
 
-<#airport_latitude> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property geo:lat
-; conversion:source_column 5
-; conversion:datatype xsd:float
-.
 
-<#airport_longitude> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property geo:long
-; conversion:source_column 6
-; conversion:datatype xsd:float
-.
 
-<#airport_latlong> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property georss:point
-; conversion:source_columns [ rdf:_1 5 ; rdf:_2 6 ; ]
-; conversion:source_column_glue " "
-.
 
-<#airport_within_municipality> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property spacerel:within
-; conversion:object_from <#municipality_uri>
-.
 
-<#airport_within_region> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property spacerel:within
-; conversion:object_from <#region_uri>
-.
 
-<#airport_within_country> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property spacerel:within
-; conversion:object_from <#country_uri>
-.
-
-<#airport_within_continent> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property spacerel:within
-; conversion:object_from <#continent_uri>
-.
-
-<#municipality_within_region> a conversion:StatementSpec
-; conversion:subject_from <#municipality_uri>
-; conversion:property spacerel:within
-; conversion:object_from <#region_uri>
-.
-
-<#region_within_country> a conversion:StatementSpec
-; conversion:subject_from <#region_uri>
-; conversion:property spacerel:within
-; conversion:object_from <#country_uri>
-.
-
-<#country_within_continent> a conversion:StatementSpec
-; conversion:subject_from <#country_uri>
-; conversion:property spacerel:within
-; conversion:object_from <#continent_uri>
-.
-
-<#airport_scheduled_service> a conversion:StatementLookupSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property fly:scheduled_service
-; conversion:source_column 12
-; conversion:lookup <#boolean_lookup>
-.
-
-<#airport_wikipedia> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property foaf:isPrimaryTopicOf
-; conversion:object_from <#wikipedia_url>
-.
-
-<#airport_dbpedia> a conversion:StatementSpec
-; conversion:subject_from <#airport_uri>
-; conversion:property owl:sameAs
-; conversion:object_from <#dbpedia_uri>
-.
-
-<#continents_lookup> a conversion:Lookup
-; conversion:lookup_entry [ conversion:lookup_key "AF"; conversion:lookup_value <http://flybydata.com/continents/africa> ]
-; conversion:lookup_entry [ conversion:lookup_key "AS"; conversion:lookup_value <http://flybydata.com/continents/asia> ]
-; conversion:lookup_entry [ conversion:lookup_key "EU"; conversion:lookup_value <http://flybydata.com/continents/europe> ]
-; conversion:lookup_entry [ conversion:lookup_key "NA"; conversion:lookup_value <http://flybydata.com/continents/north_america> ]
-; conversion:lookup_entry [ conversion:lookup_key "SA"; conversion:lookup_value <http://flybydata.com/continents/south_america> ]
-; conversion:lookup_entry [ conversion:lookup_key "OC"; conversion:lookup_value <http://flybydata.com/continents/oceania> ]
-; conversion:lookup_entry [ conversion:lookup_key "AN"; conversion:lookup_value <http://flybydata.com/continents/antarctica> ]
-.
-
-<#boolean_lookup> a conversion:Lookup
-; conversion:lookup_entry [ conversion:lookup_key "yes"; conversion:lookup_value "true"^^xsd:boolean ]
-; conversion:lookup_entry [ conversion:lookup_key "true"; conversion:lookup_value "true"^^xsd:boolean ]
-; conversion:lookup_entry [ conversion:lookup_key "no"; conversion:lookup_value "false"^^xsd:boolean ]
-; conversion:lookup_entry [ conversion:lookup_key "false"; conversion:lookup_value "false"^^xsd:boolean ]
-.

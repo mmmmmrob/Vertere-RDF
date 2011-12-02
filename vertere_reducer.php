@@ -6,9 +6,8 @@ define('MORIARTY_DIR', LIB_DIR.'moriarty/');
 define('MORIARTY_ARC_DIR', LIB_DIR.'arc/');
 include_once MORIARTY_DIR.'moriarty.inc.php';
 include_once MORIARTY_DIR.'simplegraph.class.php';
-include_once 'inc/sequencegraph.class.php';
 
-$graph = new SequenceGraph();
+$graph = new SimpleGraph();
 $previous_subject = null;
 
 while ($line = fgets(STDIN))
@@ -25,7 +24,7 @@ while ($line = fgets(STDIN))
 	$property = $matches[2];
 	$remainder = $matches[3];
 
-	if ($subject != $previous_subject && $previous_subject == null) {
+	if ($subject != $previous_subject && $previous_subject != null) {
 		echo $graph->to_ntriples();
 		$graph->remove_all_triples();
 	}
