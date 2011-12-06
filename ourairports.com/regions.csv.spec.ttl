@@ -1,0 +1,91 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix bibo: <http://example.com/bibo#> .
+@prefix fly: <http://flybydata.com/schema/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix georss: <http://www.georss.org/georss/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix spacerel: <http://data.ordnancesurvey.co.uk/ontology/spatialrelations/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# 1 id
+# 2 code
+# 3 local_code
+# 4 name
+# 5 continent
+# 6 iso_country
+# 7 wikipedia_link
+# 8 keywords
+
+<#> a :Spec
+; :format :CSV
+; :header_rows 1
+; :expected_header ( "\"id\",\"code\",\"local_code\",\"name\",\"continent\",\"iso_country\",\"wikipedia_link\",\"keywords\"" )
+; :resource <#continent>, <#country>, <#region>, <#ourairports_region_page>, <#wikipedia_page>, <#dbpedia_resource>
+; :base_uri "http://data.kasabi.com/dataset/world_geography/"
+.
+
+<#continent> a :Resource
+; :identity [ :source_column 5; :lookup <#continents_lookup> ]
+.
+
+<#country> a :Resource
+; :identity [ :source_column 6; :container "countries"; :nest_under <#continent> ]
+.
+
+<#region> a :Resource
+; :base_uri "http://data.kasabi.com/dataset/world_geography/"
+; :type fly:Region
+; :identity [ :source_column 2; :container "regions"; :nest_under <#country> ]
+; :relationship
+	[ :property spacerel:within; :object_from <#country> ],
+	[ :property owl:sameAs; :object_from <#dbpedia_resource> ],
+	[ :property foaf:isPrimaryTopicOf; :object_from <#wikipedia_page> ],
+	[ :property foaf:isPrimaryTopicOf; :object_from <#ourairports_region_page> ]
+; :attribute [ :property fly:iso_code; :source_column 2 ]
+.
+
+<#wikipedia_page> a :Resource
+; :type bibo:Webpage
+; :identity [ :source_column 7; :base_uri "" ]
+.
+
+<#dbpedia_resource> a :Resource
+; :identity [
+	:source_column 7;
+	:base_uri "";
+	:process ( :regex );
+	:regex_match "http://[^/]*/wiki/(.*)";
+	:regex_output "http://dbpedia.org/resource/${1}";
+	]
+.
+
+<#ourairports_region_page> a :Resource
+; :type bibo:Webpage
+; :identity [
+	:source_columns ( 6 3 ) ;
+	:source_column_glue "/" ;
+	:base_uri "http://www.ourairports.com/countries/";
+	]
+.
+
+<#continents_lookup> a :Lookup
+; :lookup_entry [ :lookup_key "AF"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/africa> ]
+; :lookup_entry [ :lookup_key "AS"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/asia> ]
+; :lookup_entry [ :lookup_key "EU"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/europe> ]
+; :lookup_entry [ :lookup_key "NA"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/north_america> ]
+; :lookup_entry [ :lookup_key "SA"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/south_america> ]
+; :lookup_entry [ :lookup_key "OC"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/oceania> ]
+; :lookup_entry [ :lookup_key "AN"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/antarctica> ]
+.
+
+
+
+
+
+
+
+
+
