@@ -168,7 +168,8 @@ class Vertere {
 		$nest_under = $this->spec->get_first_resource($identity, NS_CONV.'nest_under');
 		if ($nest_under != null) {
 			if (!isset($uris[$nest_under])) {
-				$this->create_uri($record, $uris, $nest_under);
+				$parent_identity = $this->spec->get_first_resource($nest_under, NS_CONV.'identity');
+				$this->create_uri($record, $uris, $nest_under, $parent_identity);
 			}
 			$base_uri = $uris[$nest_under];
 			if (!preg_match('%[/#]$%', $base_uri)) { $base_uri .= '/'; }

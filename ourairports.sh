@@ -9,12 +9,15 @@ cat ourairports.com/2011-11-09/countries.csv | ./vertere_mapper.php ourairports.
 echo Describing regions
 cat ourairports.com/2011-11-09/regions.csv | ./vertere_mapper.php ourairports.com/regions.csv.spec.ttl >> ourairports.com/output_data/full.rdf.nt
 
-echo Sorting descriptions
+echo Describing runways
+cat ourairports.com/2011-11-09/runways.csv | ./vertere_mapper.php ourairports.com/runways.csv.spec.ttl >> ourairports.com/output_data/full.rdf.nt
+
+echo Sorting and de-duping descriptions
 sort -u ourairports.com/output_data/full.rdf.nt > ourairports.com/output_data/sorted.rdf.nt
 
 rm ourairports.com/output_data/full.rdf.nt
 
-#echo Extending descriptions
+#echo De-duping and extending descriptions
 #cat ourairports.com/output_data/sorted.rdf.nt | ./vertere_reducer.php > ourairports.com/output_data/ourairports.rdf.nt
 
 #rm ourairports.com/output_data/sorted.rdf.nt
