@@ -1,6 +1,7 @@
 <?php
 include_once MORIARTY_DIR.'moriarty.inc.php';
 include_once MORIARTY_DIR.'simplegraph.class.php';
+include_once 'conversions.class.php';
 
 class Vertere {
 
@@ -20,9 +21,21 @@ class Vertere {
 	public function convert_array_to_graph($record) {
 		$uris = $this->create_uris($record);
 		$graph = new SimpleGraph();
+		$this->add_default_types($graph, $uris);
 		$this->create_relationships($graph, $uris);
 		$this->create_attributes($graph, $uris, $record);
 		return $graph;
+	}
+	
+	private function add_default_types($graph, $uris) {
+		foreach ( $this->resources as $resource ) {
+			$types = $this->spec->get_resource_triple_values($resource, NS_CONV.'type');
+			foreach ($types as $type) {
+				if (!empty($type) && isset($uris[$resource])) {
+					$graph->add_resource_triple($uris[$resource], NS_RDF.'type', $type);
+				}
+			}
+		}
 	}
 	
 	private function create_attributes(&$graph, $uris, $record) {
@@ -102,25 +115,41 @@ class Vertere {
 		$uris = array();
 		foreach ( $this->resources as $resource ) {
 			if (!isset($uris[$resource])) {
-				$this->create_uri($record, $uris, $resource);
+				$identity = $this->spec->get_first_resource($resource, NS_CONV.'identity');
+				$this->create_uri($record, $uris, $resource, $identity);
 			}
 		}
 		return $uris;
 	}
 	
-	private function create_uri($record, &$uris, $resource) {
-		$spec = $this->spec;
-		$identity = $spec->get_first_resource($resource, NS_CONV.'identity');
-		$source_column = $spec->get_first_literal($identity, NS_CONV.'source_column');
-		$source_column--; //make the source column zero-indexed
-		$source_value = $record[$source_column];
-
-		if (empty($source_value)) {
+	private function create_uri($record, &$uris, $resource, $identity) {
+		$source_column = $this->spec->get_first_literal($identity, NS_CONV.'source_column');
+		$source_columns = $this->spec->get_first_resource($identity, NS_CONV.'source_columns');
+		
+		if ($source_column) {
+			$source_column--;
+			$source_value = $record[$source_column];
+		} else if ($source_columns) {
+			$source_columns = $this->spec->get_list_values($source_columns);
+			$glue = $this->spec->get_first_literal($identity, NS_CONV.'source_column_glue');
+			$source_values = array();
+			foreach ($source_columns as $source_column) {
+				$source_column = $source_column['value'];
+				$source_column--;
+				if (!empty($record[$source_column])) {
+					$source_values[] = $record[$source_column];
+				}
+			}
+			$source_value = implode('', $source_values);
+			if (!empty($source_value)) {
+				$source_value = implode($glue, $source_values);
+			}
+		} else {
 			return;
 		}
 
 		//Check for lookups
-		$lookup = $spec->get_first_resource($identity, NS_CONV.'lookup');
+		$lookup = $this->spec->get_first_resource($identity, NS_CONV.'lookup');
 		if($lookup != null) {
 			$lookup_value = $this->lookup($lookup, $source_value);
 			if ($lookup_value != null && $lookup_value['type'] == 'uri') {
@@ -132,11 +161,11 @@ class Vertere {
 		}
 		
 		//Decide on base_uri
-		$base_uri = $spec->get_first_literal($identity, NS_CONV.'base_uri');
+		$base_uri = $this->spec->get_first_literal($identity, NS_CONV.'base_uri');
 		if ($base_uri === null) { $base_uri = $this->base_uri; }
 
 		//Decide if the resource should be nested (overrides the base_uri)
-		$nest_under = $spec->get_first_resource($identity, NS_CONV.'nest_under');
+		$nest_under = $this->spec->get_first_resource($identity, NS_CONV.'nest_under');
 		if ($nest_under != null) {
 			if (!isset($uris[$nest_under])) {
 				$this->create_uri($record, $uris, $nest_under);
@@ -145,12 +174,18 @@ class Vertere {
 			if (!preg_match('%[/#]$%', $base_uri)) { $base_uri .= '/'; }
 		}
 		
-		$container = $spec->get_first_literal($identity, NS_CONV.'container');
+		$container = $this->spec->get_first_literal($identity, NS_CONV.'container');
 		if (!empty($container) && !preg_match('%[/#]$%', $container)) { $container .= '/'; }
 		
 		$source_value = $this->process($identity, $source_value);
-
-		$uris[$resource] = "${base_uri}${container}${source_value}";
+		
+		if (!empty($source_value)) {
+			$uri = "${base_uri}${container}${source_value}";
+			$uris[$resource] = $uri;
+		} else {
+			$identity = $this->spec->get_first_resource($resource, NS_CONV.'alternative_identity');
+			$this->create_uri($record, $uris, $resource, $identity);
+		}
 	}
 	
 	public function process($resource, $value) {
@@ -178,7 +213,15 @@ class Vertere {
 						$regex_output = $this->spec->get_first_literal($resource, NS_CONV.'regex_output');
 						$value = preg_replace("${delimeter}${regex_pattern}${delimeter}", $regex_output, $value);
 						break;
-
+						
+					case NS_CONV.'feet_to_metres':
+						$value = Conversions::feet_to_metres($value);
+						break;
+						
+					case NS_CONV.'round':
+						$value = round($value);
+						break;
+						
 					default:
 						throw new Exception("Unknown process requested: ${step}");
 				}
@@ -212,47 +255,3 @@ class Vertere {
 	}
 
 }
-
-// 
-// //Create our statements from the statement specs
-// foreach ( $statement_specs as $statement_spec ) {
-// 	$subject_from = $spec->get_first_resource($statement_spec, NS_CONV.'subject_from');
-// 	if (!isset($uris[$subject_from])) { continue; } //If no subject, then can't make statement
-// 	$subject = $uris[$subject_from];
-// 	$property = $spec->get_first_resource($statement_spec, NS_CONV.'property');
-// 	if (empty($property)) { abort("${statement_spec} does not contain a property."); }
-// 	$source_column = $spec->get_first_literal($statement_spec, NS_CONV.'source_column');
-// 	$source_column_seq = $spec->get_first_resource($statement_spec, NS_CONV.'source_columns');
-// 	$object_from = $spec->get_first_resource($statement_spec, NS_CONV.'object_from');
-// 	$language = $spec->get_first_literal($statement_spec, NS_CONV.'language');
-// 	$datatype = $spec->get_first_resource($statement_spec, NS_CONV.'datatype');
-// 	if ($spec->has_resource_triple($statement_spec, NS_RDF.'type', NS_CONV.'StatementLookupSpec')) {
-// 		$source_column--; //make the source column zero-indexed
-// 		$lookup = $spec->get_first_resource($statement_spec, NS_CONV.'lookup');
-// 		if (!isset($lookups[$lookup][$record[$source_column]])) { abort("Lookup ${lookup} did not contain a lookup for ${record[$source_column]}"); }
-// 		$lookup_value = $lookups[$lookup][$record[$source_column]];
-// 		if ($lookup_value['type'] == 'uri') {
-// 			$output_graph->add_resource_triple($subject, $property, $lookup_value['value']);
-// 		} else {
-// 			$output_graph->add_literal_triple($subject, $property, $lookup_value['value'], @$lookup_value['lang'], @$lookup_value['datatype']);
-// 		}
-// 	} else if ($source_column) {
-// 		$source_column--; //make the source column zero-indexed
-// 		$value = $record[$source_column];
-// 		$output_graph->add_literal_triple($subject, $property, $value, $language, $datatype);
-// 	} else if ($source_column_seq) {
-// 		$source_columns = $spec->get_sequence_values($source_column_seq);
-// 		$values = array();
-// 		foreach($source_columns as $source_column) {
-// 			$values[] = $record[$source_column - 1];
-// 		}
-// 		$glue = $spec->get_first_literal($statement_spec, NS_CONV.'source_column_glue');
-// 		$value = implode($glue, $values);
-// 		$output_graph->add_literal_triple($subject, $property, $value, $language, $datatype);
-// 	} else if ($object_from) {
-// 		if (!isset($uris[$object_from])) { continue; } //If no object then can't make statement
-// 		$object = $uris[$object_from];
-// 		$output_graph->add_resource_triple($subject, $property, $object);
-// 	} else {
-// 		abort("$statement_spec does not specify source column(s) or object uri");
-// 	}

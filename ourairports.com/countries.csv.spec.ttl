@@ -5,6 +5,7 @@
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix georss: <http://www.georss.org/georss/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix places: <http://purl.org/ontology/places#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix spacerel: <http://data.ordnancesurvey.co.uk/ontology/spatialrelations/> .
@@ -40,7 +41,9 @@
 	[ :property owl:sameAs; :object_from <#dbpedia_resource> ],
 	[ :property foaf:isPrimaryTopicOf; :object_from <#wikipedia_page> ],
 	[ :property foaf:isPrimaryTopicOf; :object_from <#ourairports_country_page> ]
-; :attribute [ :property fly:iso_code; :source_column 2 ]
+; :attribute
+	[ :property fly:iso_code; :source_column 2 ],
+	[ :property foaf:name; :source_column 3 ]
 .
 
 <#wikipedia_page> a :Resource

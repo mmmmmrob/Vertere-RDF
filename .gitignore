@@ -7,3 +7,5 @@ geoplanet/*.tsv
 geoplanet/Readme.txt
 
 tmp.rdf.nt
+
+ourairports.com/output_data/*

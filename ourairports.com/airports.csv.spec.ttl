@@ -5,6 +5,7 @@
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix georss: <http://www.georss.org/georss/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix places: <http://purl.org/ontology/places#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix spacerel: <http://data.ordnancesurvey.co.uk/ontology/spatialrelations/> .
@@ -34,7 +35,7 @@
 ; :header_rows 1
 ; :expected_header ( "\"id\",\"ident\",\"type\",\"name\",\"latitude_deg\",\"longitude_deg\",\"elevation_ft\",\"continent\",\"iso_country\",\"iso_region\",\"municipality\",\"scheduled_service\",\"gps_code\",\"iata_code\",\"local_code\",\"home_link\",\"wikipedia_link\",\"keywords\"" )
 ; :resource <#airport>, <#airport_type>, <#country>, <#continent>, <#region>, <#municipality>, <#wikipedia_page>, <#dbpedia_resource>, <#ourairports_page>
-; :base_uri "http://flybydata.com/"
+; :base_uri "http://data.kasabi.com/dataset/airports/"
 .
 
 <#airport> a :Resource
@@ -52,6 +53,7 @@
 ; :attribute
 	[ :property geo:lat; :source_column 5; :datatype xsd:float ],
 	[ :property geo:long; :source_column 6; :datatype xsd:float ],
+	[ :property geo:alt; :source_column 7; :datatype xsd:float; :process ( :feet_to_metres ); ],
 	[ :property georss:point; :source_columns (5 6); :source_column_glue " " ],
 	[ :property foaf:name; :source_column 4; :language "en" ],
 	[ :property fly:icao_code; :source_column 2 ],
@@ -59,7 +61,7 @@
 .
 
 <#airport_type> a :Resource
-; :identity [ :source_column 3; :process ( :normalise :title_case ); :container "schema" ]
+; :identity [ :source_column 3; :process ( :normalise :title_case ); :base_uri "http://flybydata.com/schema/" ]
 ; :type rdfs:Class
 ; :attribute
 	[
@@ -72,14 +74,14 @@
 .
 
 <#continent> a :Resource
-; :type fly:Continent
+; :type places:Continent
 ; :identity [ :source_column 8; :lookup <#continents_lookup> ]
 ; :relationship [ :property spacerel:contains; :object_from <#country> ]
-; :attribute [ :property foaf:name; :source_column 8; :lookup <#continents_name_lookup> ]
 .
 
 <#country> a :Resource
-; :type fly:Country
+; :base_uri "http://data.kasabi.com/dataset/world_geography/"
+; :type places:Country
 ; :identity [ :source_column 9; :container "countries"; :nest_under <#continent> ]
 ; :relationship [ :property spacerel:within; :object_from <#continent> ]
 ; :relationship [ :property spacerel:contains; :object_from <#region> ]
@@ -87,7 +89,8 @@
 .
 
 <#region> a :Resource
-; :type fly:Region
+; :base_uri "http://data.kasabi.com/dataset/world_geography/"
+; :type places:Region
 ; :identity [ :source_column 10; :container "regions"; :nest_under <#country> ]
 ; :relationship [ :property spacerel:within; :object_from <#country> ]
 ; :relationship [ :property spacerel:contains; :object_from <#municipality> ]
@@ -95,7 +98,8 @@
 .
 
 <#municipality> a :Resource
-; :type fly:Municipality
+; :base_uri "http://data.kasabi.com/dataset/world_geography/"
+; :type places:Municipality
 ; :identity [ :source_column 11; :container "municipalities"; :nest_under <#region>; :process ( :normalise ) ]
 ; :relationship [ :property spacerel:within; :object_from <#region> ]
 ; :attribute [ :property rdfs:label; :source_column 11 ]
@@ -107,7 +111,6 @@
 .
 
 <#dbpedia_resource> a :Resource
-; :type bibo:Webpage
 ; :identity [
 	:source_column 17;
 	:base_uri "";
@@ -129,23 +132,13 @@
 .
 
 <#continents_lookup> a :Lookup
-; :lookup_entry [ :lookup_key "AF"; :lookup_value <http://flybydata.com/continents/africa> ]
-; :lookup_entry [ :lookup_key "AS"; :lookup_value <http://flybydata.com/continents/asia> ]
-; :lookup_entry [ :lookup_key "EU"; :lookup_value <http://flybydata.com/continents/europe> ]
-; :lookup_entry [ :lookup_key "NA"; :lookup_value <http://flybydata.com/continents/north_america> ]
-; :lookup_entry [ :lookup_key "SA"; :lookup_value <http://flybydata.com/continents/south_america> ]
-; :lookup_entry [ :lookup_key "OC"; :lookup_value <http://flybydata.com/continents/oceania> ]
-; :lookup_entry [ :lookup_key "AN"; :lookup_value <http://flybydata.com/continents/antarctica> ]
-.
-
-<#continents_name_lookup> a :Lookup
-; :lookup_entry [ :lookup_key "AF"; :lookup_value "Africa"@en ]
-; :lookup_entry [ :lookup_key "AS"; :lookup_value "Asia"@en ]
-; :lookup_entry [ :lookup_key "EU"; :lookup_value "Europe"@en ]
-; :lookup_entry [ :lookup_key "NA"; :lookup_value "North America"@en ]
-; :lookup_entry [ :lookup_key "SA"; :lookup_value "South America"@en ]
-; :lookup_entry [ :lookup_key "OC"; :lookup_value "Oceania"@en ]
-; :lookup_entry [ :lookup_key "AN"; :lookup_value "Antarctica"@en ]
+; :lookup_entry [ :lookup_key "AF"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/africa> ]
+; :lookup_entry [ :lookup_key "AS"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/asia> ]
+; :lookup_entry [ :lookup_key "EU"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/europe> ]
+; :lookup_entry [ :lookup_key "NA"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/north_america> ]
+; :lookup_entry [ :lookup_key "SA"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/south_america> ]
+; :lookup_entry [ :lookup_key "OC"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/oceania> ]
+; :lookup_entry [ :lookup_key "AN"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/antarctica> ]
 .
 
 <#boolean_lookup> a :Lookup

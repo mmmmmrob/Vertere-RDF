@@ -21,8 +21,8 @@ rm ourairports.com/output_data/full.rdf.nt
 mv ourairports.com/output_data/sorted.rdf.nt ourairports.com/output_data/ourairports.rdf.nt
 
 echo Converting descriptions to turtle
-rapper -i ntriples -o turtle ourairports.com/output_data/ourairports.rdf.nt > ourairports.com/output_data/ourairports.rdf.ttl
+rapper -i ntriples -o turtle -f'xmlns:conv="http://example.com/schema/data_conversion#"' -f'xmlns:bibo="http://example.com/bibo#"' -f'xmlns:fly="http://flybydata.com/schema/"' -f'xmlns:foaf="http://xmlns.com/foaf/0.1/"' -f'xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"' -f'xmlns:georss="http://www.georss.org/georss/"' -f'xmlns:owl="http://www.w3.org/2002/07/owl#"' -f'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"' -f'xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"' -f'xmlns:spacerel="http://data.ordnancesurvey.co.uk/ontology/spatialrelations/"' -f'xmlns:xsd="http://www.w3.org/2001/XMLSchema#"' ourairports.com/output_data/ourairports.rdf.nt > ourairports.com/output_data/ourairports.rdf.ttl
 
 echo Converting descriptions to rdfxml
-rapper -i ntriples -o rdfxml-abbrev ourairports.com/output_data/ourairports.rdf.nt > ourairports.com/output_data/ourairports.rdf.xml
+rapper -i ntriples -o rdfxml-abbrev -f'xmlns:conv="http://example.com/schema/data_conversion#"' -f'xmlns:bibo="http://example.com/bibo#"' -f'xmlns:fly="http://flybydata.com/schema/"' -f'xmlns:foaf="http://xmlns.com/foaf/0.1/"' -f'xmlns:geo="http://www.w3.org/2003/01/geo/wgs84_pos#"' -f'xmlns:georss="http://www.georss.org/georss/"' -f'xmlns:owl="http://www.w3.org/2002/07/owl#"' -f'xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"' -f'xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"' -f'xmlns:spacerel="http://data.ordnancesurvey.co.uk/ontology/spatialrelations/"' -f'xmlns:xsd="http://www.w3.org/2001/XMLSchema#"' ourairports.com/output_data/ourairports.rdf.nt > ourairports.com/output_data/ourairports.rdf.xml
 
