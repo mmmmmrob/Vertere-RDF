@@ -100,7 +100,7 @@
 <#municipality> a :Resource
 ; :base_uri "http://data.kasabi.com/dataset/world_geography/"
 ; :type places:Municipality
-; :identity [ :source_column 11; :container "municipalities"; :nest_under <#region>; :process ( :normalise ) ]
+; :identity [ :source_column 11; :container "municipalities"; :nest_under <#region>; :process ( :flatten_utf8 :normalise ) ]
 ; :relationship [ :property spacerel:within; :object_from <#region> ]
 ; :attribute [ :property rdfs:label; :source_column 11 ]
 .

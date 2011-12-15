@@ -48,6 +48,7 @@ class Vertere {
 	}
 	
 	private function create_attribute(&$graph, $uris, $record, $resource, $attribute) {
+		if (!isset($uris[$resource])) { return; }
 		$subject = $uris[$resource];
 		$property = $this->spec->get_first_resource($attribute, NS_CONV.'property');
 		$language = $this->spec->get_first_literal($attribute, NS_CONV.'language');
@@ -88,7 +89,6 @@ class Vertere {
 		$source_value = $this->process($attribute, $source_value);
 		
 		$graph->add_literal_triple($subject, $property, $source_value, $language, $datatype);
-		
 		
 	}
 	
@@ -199,6 +199,10 @@ class Vertere {
 						$value = strtolower(str_replace(' ', '_', trim($value)));
 						break;
 
+					case NS_CONV.'flatten_utf8':
+						$value = preg_replace('/[^-\w]+/', '', iconv('UTF-8', 'ascii//TRANSLIT', $value));
+						break;
+
 					case NS_CONV.'title_case':
 						$value = ucwords($value);
 						break;
@@ -214,15 +218,15 @@ class Vertere {
 						$regex_output = $this->spec->get_first_literal($resource, NS_CONV.'regex_output');
 						$value = preg_replace("${delimeter}${regex_pattern}${delimeter}", $regex_output, $value);
 						break;
-						
+
 					case NS_CONV.'feet_to_metres':
 						$value = Conversions::feet_to_metres($value);
 						break;
-						
+
 					case NS_CONV.'round':
 						$value = round($value);
 						break;
-						
+
 					default:
 						throw new Exception("Unknown process requested: ${step}");
 				}
@@ -250,9 +254,4 @@ class Vertere {
 		}
 		return isset($this->lookups[$lookup][$key]) ? $this->lookups[$lookup][$key] : null;
 	}
-
-	public static function normalise($part) {
-		return rawurlencode(str_replace(' ', '_', strtolower(trim($part))));
-	}
-
 }

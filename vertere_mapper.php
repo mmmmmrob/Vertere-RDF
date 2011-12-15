@@ -8,6 +8,7 @@ include_once MORIARTY_DIR.'moriarty.inc.php';
 include_once MORIARTY_DIR.'simplegraph.class.php';
 include_once 'inc/sequencegraph.class.php';
 include_once 'inc/csvreader.class.php';
+include_once 'inc/tsvreader.class.php';
 include_once 'inc/vertere.class.php';
 include_once 'inc/diagnostics.php';
 
@@ -27,7 +28,8 @@ $spec_uri = $specs[0];
 
 //Find format and create reader for it
 $format_uri = $spec->get_first_resource($spec_uri, NS_CONV.'format');
-$reader = $format_uri == NS_CONV.'CSV' ? new CsvReader(STDIN) : null;
+$reader = $format_uri == NS_CONV.'CSV' ? new CsvReader(STDIN) : $reader;
+$reader = $format_uri == NS_CONV.'TSV' ? new TsvReader(STDIN) : $reader;
 if ($reader == null) { abort("Format ${format_uri} is not supported."); }
 
 $vertere = new Vertere($spec, $spec_uri);

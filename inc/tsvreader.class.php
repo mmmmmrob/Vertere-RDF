@@ -1,6 +1,6 @@
 <?php
 
-class CsvReader {
+class TsvReader {
 	var $_file;
 	
 	public function __construct($file) {
@@ -8,6 +8,6 @@ class CsvReader {
 	}
 	
 	public function next_record() {
-		return fgetcsv($this->_file);
+		return fgetcsv($this->_file, 0, "\t");
 	}
 }
