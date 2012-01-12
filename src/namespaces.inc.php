@@ -1,7 +1,7 @@
 <?php
 define('BASE_URI', 'http://flybydata.com/');
 $namespaces = array(
-	'fly' => 'http://flybydata.com/schema/',
+	'fly' => 'http://data.kasabi.com/dataset/airports/schema/',
 	'dc' => 'http://purl.org/dc/elements/1.1/',
 	'dcterms' => 'http://purl.org/dc/terms/',
 	'foaf' => 'http://xmlns.com/foaf/0.1/',

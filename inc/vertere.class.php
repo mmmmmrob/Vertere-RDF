@@ -115,16 +115,17 @@ class Vertere {
 		$uris = array();
 		foreach ( $this->resources as $resource ) {
 			if (!isset($uris[$resource])) {
-				$identity = $this->spec->get_first_resource($resource, NS_CONV.'identity');
-				$this->create_uri($record, $uris, $resource, $identity);
+				$this->create_uri($record, $uris, $resource);
 			}
 		}
 		return $uris;
 	}
 	
-	private function create_uri($record, &$uris, $resource, $identity) {
+	private function create_uri($record, &$uris, $resource, $identity = null) {
+		if (!$identity) { $identity = $this->spec->get_first_resource($resource, NS_CONV.'identity'); }
 		$source_column = $this->spec->get_first_literal($identity, NS_CONV.'source_column');
 		$source_columns = $this->spec->get_first_resource($identity, NS_CONV.'source_columns');
+		$source_resource = $this->spec->get_first_resource($identity, NS_CONV.'source_resource');
 		
 		if ($source_column) {
 			$source_column--;
@@ -144,6 +145,11 @@ class Vertere {
 			if (!empty($source_value)) {
 				$source_value = implode($glue, $source_values);
 			}
+		} else if ($source_resource) {
+			if (!isset($uris[$source_resource])) {
+				$this->create_uri($record, $uris, $source_resource);
+			}
+			$source_value = $uris[$source_resource];
 		} else {
 			return;
 		}
@@ -168,8 +174,7 @@ class Vertere {
 		$nest_under = $this->spec->get_first_resource($identity, NS_CONV.'nest_under');
 		if ($nest_under != null) {
 			if (!isset($uris[$nest_under])) {
-				$parent_identity = $this->spec->get_first_resource($nest_under, NS_CONV.'identity');
-				$this->create_uri($record, $uris, $nest_under, $parent_identity);
+				$this->create_uri($record, $uris, $nest_under);
 			}
 			$base_uri = $uris[$nest_under];
 			if (!preg_match('%[/#]$%', $base_uri)) { $base_uri .= '/'; }
@@ -185,7 +190,9 @@ class Vertere {
 			$uris[$resource] = $uri;
 		} else {
 			$identity = $this->spec->get_first_resource($resource, NS_CONV.'alternative_identity');
-			$this->create_uri($record, $uris, $resource, $identity);
+			if ($identity) {
+				$this->create_uri($record, $uris, $resource, $identity);
+			}
 		}
 	}
 	

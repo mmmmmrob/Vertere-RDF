@@ -1,5 +1,5 @@
 @prefix conversion: <http://example.com/schema/data_conversion#> .
-@prefix fly: <http://flybydata.com/schema/> .
+@prefix fly: <http://data.kasabi.com/dataset/airports/schema/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
@@ -49,7 +49,7 @@
 ; conversion:urlify true
 .
 <#column_3_type> a conversion:TypeColumn
-; conversion:base_uri "http://flybydata.com/schema/"
+; conversion:base_uri "http://data.kasabi.com/dataset/airports/schema/"
 ; conversion:urlify true
 .
 <#column_4_name> a conversion:LiteralProperty

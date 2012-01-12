@@ -1,6 +1,6 @@
 @prefix : <http://example.com/schema/data_conversion#> .
-@prefix bibo: <http://example.com/bibo#> .
-@prefix fly: <http://flybydata.com/schema/> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix fly: <http://data.kasabi.com/dataset/airports/schema/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix georss: <http://www.georss.org/georss/> .
@@ -29,17 +29,27 @@
 .
 
 <#continent> a :Resource
-; :identity [ :source_column 5; :lookup <#continents_lookup> ]
+; :identity [
+	:source_column 5;
+	:lookup <#continents_lookup>
+	]
 .
 
 <#country> a :Resource
-; :identity [ :source_column 6; :container "countries"; :nest_under <#continent> ]
+; :identity [
+	:source_column 6;
+	:container "countries";
+	:nest_under <#continent>
+	]
 .
 
 <#region> a :Resource
-; :base_uri "http://data.kasabi.com/dataset/world_geography/"
 ; :type places:Region
-; :identity [ :source_column 2; :container "regions"; :nest_under <#country> ]
+; :identity [
+	:source_column 2;
+	:container "regions";
+	:nest_under <#country>
+	]
 ; :relationship
 	[ :property spacerel:within; :object_from <#country> ],
 	[ :property owl:sameAs; :object_from <#dbpedia_resource> ],
@@ -52,13 +62,19 @@
 
 <#wikipedia_page> a :Resource
 ; :type bibo:Webpage
-; :identity [ :source_column 7; :base_uri "" ]
+; :identity [
+	:source_column 7;
+	:base_uri "" ;
+	:process ( :regex );
+	:regex_match " ";
+	:regex_output "";
+	]
 .
 
 <#dbpedia_resource> a :Resource
 ; :identity [
-	:source_column 7;
-	:base_uri "";
+	:source_resource <#wikipedia_page>;
+	:base_uri "" ;
 	:process ( :regex );
 	:regex_match "http://[^/]*/wiki/(.*)";
 	:regex_output "http://dbpedia.org/resource/${1}";

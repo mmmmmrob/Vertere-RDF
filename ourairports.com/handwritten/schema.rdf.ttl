@@ -1,0 +1,32 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix dbpprop: <http://dbpedia.org/property/> .
+@prefix fly: <http://data.kasabi.com/dataset/airports/schema/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix georss: <http://www.georss.org/georss/> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix places: <http://purl.org/ontology/places#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
+@prefix spacerel: <http://data.ordnancesurvey.co.uk/ontology/spatialrelations/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+fly: a owl:Ontology
+.
+
+fly:Airport a rdfs:Class
+; rdfs:label "Airport"
+; owl:sameAs schema:Airport
+.
+
+fly:icao_code a rdf:Property
+; rdfs:label "ICAO Code"
+; foaf:primaryTopicOf <http://en.wikipedia.org/wiki/International_Civil_Aviation_Organization_airport_code>
+; owl:sameAs dbpprop:icao
+.
+
