@@ -1,6 +1,6 @@
 @prefix : <http://example.com/schema/data_conversion#> .
 @prefix bibo: <http://purl.org/ontology/bibo/> .
-@prefix fly: <http://data.kasabi.com/dataset/airports/schema/> .
+@prefix fly: <http://vocab.org/fly/schema/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix geographis: <http://www.telegraphis.net/ontology/geography/geography#> .
@@ -9,6 +9,7 @@
 @prefix places: <http://purl.org/ontology/places#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix schema: <http://schema.org/> .
 @prefix spacerel: <http://data.ordnancesurvey.co.uk/ontology/spatialrelations/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
@@ -28,16 +29,22 @@
 .
 
 <#continent> a :Resource
-; :type geographis:Continent
-; :identity [ :source_column 4; :lookup <#continents_lookup> ]
+; :type geographis:Continent, places:Continent
+; :identity [
+	:source_column 4;
+	:base_uri "http://data.kasabi.com/dataset/world-geography/continents/"
+]
 ; :relationship
 	[ :property spacerel:contains; :object_from <#country> ],
 	[ :property foaf:isPrimaryTopicOf; :object_from <#ourairports_continent_page> ]
-; :attribute [ :property foaf:name; :source_column 4; :lookup <#continents_name_lookup> ]
 .
 
 <#country> a :Resource
-; :identity [ :source_column 2; :container "countries"; :nest_under <#continent> ]
+; :identity [
+	:source_column 2;
+	:base_uri "http://data.kasabi.com/dataset/world-geography/countries/"
+]
+; :type places:Country, schema:Country
 ; :relationship
 	[ :property spacerel:within; :object_from <#continent> ],
 	[ :property owl:sameAs; :object_from <#dbpedia_resource> ],
@@ -89,32 +96,5 @@
 	:regex_output "http://www.ourairports.com/countries/${1}/";
 	]
 .
-
-<#continents_lookup> a :Lookup
-; :lookup_entry [ :lookup_key "AF"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/africa> ]
-; :lookup_entry [ :lookup_key "AS"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/asia> ]
-; :lookup_entry [ :lookup_key "EU"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/europe> ]
-; :lookup_entry [ :lookup_key "NA"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/north_america> ]
-; :lookup_entry [ :lookup_key "SA"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/south_america> ]
-; :lookup_entry [ :lookup_key "OC"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/oceania> ]
-; :lookup_entry [ :lookup_key "AN"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/antarctica> ]
-.
-
-<#continents_name_lookup> a :Lookup
-; :lookup_entry [ :lookup_key "AF"; :lookup_value "Africa"@en ]
-; :lookup_entry [ :lookup_key "AS"; :lookup_value "Asia"@en ]
-; :lookup_entry [ :lookup_key "EU"; :lookup_value "Europe"@en ]
-; :lookup_entry [ :lookup_key "NA"; :lookup_value "North America"@en ]
-; :lookup_entry [ :lookup_key "SA"; :lookup_value "South America"@en ]
-; :lookup_entry [ :lookup_key "OC"; :lookup_value "Oceania"@en ]
-; :lookup_entry [ :lookup_key "AN"; :lookup_value "Antarctica"@en ]
-.
-
-
-
-
-
-
-
 
 

@@ -1,6 +1,6 @@
 @prefix : <http://example.com/schema/data_conversion#> .
 @prefix bibo: <http://purl.org/ontology/bibo/> .
-@prefix fly: <http://data.kasabi.com/dataset/airports/schema/> .
+@prefix fly: <http://vocab.org/fly/schema/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix georss: <http://www.georss.org/georss/> .
@@ -31,24 +31,22 @@
 <#continent> a :Resource
 ; :identity [
 	:source_column 5;
-	:lookup <#continents_lookup>
-	]
+	:base_uri "http://data.kasabi.com/dataset/world-geography/continents/"
+]
 .
 
 <#country> a :Resource
 ; :identity [
 	:source_column 6;
-	:container "countries";
-	:nest_under <#continent>
-	]
+	:base_uri "http://data.kasabi.com/dataset/world-geography/countries/"
+]
 .
 
 <#region> a :Resource
 ; :type places:Region
 ; :identity [
 	:source_column 2;
-	:container "regions";
-	:nest_under <#country>
+	:base_uri "http://data.kasabi.com/dataset/world-geography/regions/"
 	]
 ; :relationship
 	[ :property spacerel:within; :object_from <#country> ],
@@ -89,22 +87,3 @@
 	:base_uri "http://www.ourairports.com/countries/";
 	]
 .
-
-<#continents_lookup> a :Lookup
-; :lookup_entry [ :lookup_key "AF"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/africa> ]
-; :lookup_entry [ :lookup_key "AS"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/asia> ]
-; :lookup_entry [ :lookup_key "EU"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/europe> ]
-; :lookup_entry [ :lookup_key "NA"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/north_america> ]
-; :lookup_entry [ :lookup_key "SA"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/south_america> ]
-; :lookup_entry [ :lookup_key "OC"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/oceania> ]
-; :lookup_entry [ :lookup_key "AN"; :lookup_value <http://data.kasabi.com/dataset/world_geography/continents/antarctica> ]
-.
-
-
-
-
-
-
-
-
-

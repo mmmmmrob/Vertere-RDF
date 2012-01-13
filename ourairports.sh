@@ -2,7 +2,7 @@
 
 cat /dev/null > ourairports.com/output_data/full.rdf.nt
 
-echo Adding hand-written rdf to the mix
+echo Starting with turtle files in hand-written rdf
 for file in $(ls ourairports.com/handwritten/*.rdf.ttl)
 do
 	rapper -i turtle -o ntriples "$file" >> ourairports.com/output_data/full.rdf.nt

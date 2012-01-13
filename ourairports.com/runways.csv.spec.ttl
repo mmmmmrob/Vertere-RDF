@@ -1,6 +1,6 @@
 @prefix : <http://example.com/schema/data_conversion#> .
 @prefix bibo: <http://purl.org/ontology/bibo/> .
-@prefix fly: <http://data.kasabi.com/dataset/airports/schema/> .
+@prefix fly: <http://vocab.org/fly/schema/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix georss: <http://www.georss.org/georss/> .
@@ -41,20 +41,19 @@
 .
 
 <#airport> a :Resource
-; :identity [ :source_column 3; :container "airports" ]
-#; :relationship
-#	[ :property fly:runway; :object_from <#runway> ]
+; :identity [ :source_column 3; ]
+; :relationship [ :property fly:runway; :object_from <#runway> ]
 .
 
 <#runway> a :Resource
 ; :identity [ :source_columns (9 15); :source_column_glue "-"; :container "runways"; :nest_under <#airport> ]
-#; :alternative_identity [ :source_column 1; :container "runways"; :nest_under <#airport> ]
+; :alternative_identity [ :source_column 1; :container "runways"; :nest_under <#airport> ]
 ; :type fly:Runway
-#; :relationship
-#	[ :property fly:at; :object_from <#airport> ]
-#; :attribute
-#	[ :property fly:length; :source_column 4; :process ( :feet_to_metres :round ) ],
-#	[ :property fly:width; :source_column 5; :process ( :feet_to_metres :round ) ]
+; :relationship
+	[ :property fly:at; :object_from <#airport> ]
+; :attribute
+	[ :property fly:length; :source_column 4; :process ( :feet_to_metres :round ) ],
+	[ :property fly:width; :source_column 5; :process ( :feet_to_metres :round ) ]
 .
 
 
