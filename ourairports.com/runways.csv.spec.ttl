@@ -46,7 +46,15 @@
 .
 
 <#runway> a :Resource
-; :identity [ :source_columns (9 15); :source_column_glue "-"; :container "runways"; :nest_under <#airport> ]
+; :identity [
+	:source_columns (9 15);
+	:source_column_glue "-";
+	:container "runways";
+	:nest_under <#airport>;
+	:process ( :regex );
+	:regex_match "\"";
+	:regex_output "";
+	]
 ; :alternative_identity [ :source_column 1; :container "runways"; :nest_under <#airport> ]
 ; :type fly:Runway
 ; :relationship

@@ -206,6 +206,10 @@ class Vertere {
 						$value = strtolower(str_replace(' ', '_', trim($value)));
 						break;
 
+					case NS_CONV.'trim_quotes':
+						$value = trim($value, '"');
+						break;
+
 					case NS_CONV.'flatten_utf8':
 						$value = preg_replace('/[^-\w]+/', '', iconv('UTF-8', 'ascii//TRANSLIT', $value));
 						break;
