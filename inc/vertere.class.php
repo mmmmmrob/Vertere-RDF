@@ -246,9 +246,16 @@ class Vertere {
 		return $value;
 	}
 	
-	public function lookup($lookup, $key) {
-		//Make lookups quicker by banging them into a PHP array
-		if (!isset($this->lookups[$lookup])) {
+  public function lookup($lookup, $key) {
+    if($this->spec->get_subject_property_values($lookup, NS_CONV.'lookup_entry')){
+      return $this->lookup_config_entries($lookup, $key);
+    } else if($this->spec->get_subject_property_values($lookup, NS_CONV.'lookup_csv_file')){
+      return $this->lookup_csv_file($lookup, $key);
+    }
+	}
+
+  function lookup_config_entries($lookup, $key){
+    if (!isset($this->lookups[$lookup])) {
 			$entries = $this->spec->get_subject_property_values($lookup, NS_CONV.'lookup_entry');
 			if (empty($entries)) { throw new Exception("Lookup ${lookup} had no lookup entries"); }
 			foreach ($entries as $entry) {
@@ -263,6 +270,29 @@ class Vertere {
 				}
 			}
 		}
-		return isset($this->lookups[$lookup][$key]) ? $this->lookups[$lookup][$key] : null;
-	}
+		return isset($this->lookups[$lookup][$key]) ? $this->lookups[$lookup][$key] : null;  
+  }
+
+  function lookup_csv_file($lookup, $key){
+    
+    if(isset($this->lookups[$lookup]['keys']) AND isset($this->lookups[$lookup]['keys'][$key])){
+      return $this->lookups[$lookup]['keys'][$key];
+    }
+
+    $filename = $this->spec->get_first_literal($lookup, NS_CONV.'lookup_csv_file');
+    $key_column = $this->spec->get_first_literal($lookup, NS_CONV.'lookup_key_column');
+    $value_column = $this->spec->get_first_literal($lookup, NS_CONV.'lookup_value_column');
+    //retain file handle
+    if(!isset($this->lookups[$lookup]['filehandle'])){
+      $this->lookups[$lookup]['filehandle'] = fopen($filename, 'r');
+    }
+    while($row = fgetcsv($this->lookups[$lookup]['filehandle'] )){
+      if($row[$key_column]==$key){
+        $value = $row[$value_column];
+        $this->lookups[$lookup]['keys'][$key] = $value;
+        return $value;
+      }
+    }
+    return false;
+  }
 }
