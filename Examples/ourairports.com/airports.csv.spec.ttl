@@ -1,0 +1,165 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix fly: <http://vocab.org/fly/schema/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix georss: <http://www.georss.org/georss/> .
+@prefix naptan: <http://transport.data.gov.uk/def/naptan/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix places: <http://purl.org/ontology/places#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix spacerel: <http://data.ordnancesurvey.co.uk/ontology/spatialrelations/> .
+@prefix transit: <http://vocab.org/transit/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# 1    id
+# 2    ident
+# 3    type
+# 4    name
+# 5    latitude_deg
+# 6    longitude_deg
+# 7    elevation_ft
+# 8    continent
+# 9    iso_country
+# 10   iso_region
+# 11   municipality
+# 12   scheduled_service
+# 13   gps_code
+# 14   iata_code
+# 15   local_code
+# 16   home_link
+# 17   wikipedia_link
+# 18   keywords
+
+<#> a :Spec
+; :format :CSV
+; :header_rows 1
+; :expected_header ( "\"id\",\"ident\",\"type\",\"name\",\"latitude_deg\",\"longitude_deg\",\"elevation_ft\",\"continent\",\"iso_country\",\"iso_region\",\"municipality\",\"scheduled_service\",\"gps_code\",\"iata_code\",\"local_code\",\"home_link\",\"wikipedia_link\",\"keywords\"" )
+; :resource <#airport>, <#airport_type>, <#country>, <#continent>, <#region>, <#municipality>, <#wikipedia_page>, <#dbpedia_resource>, <#ourairports_page>, <#naptan_resource>
+; :base_uri "http://data.kasabi.com/dataset/airports/"
+.
+
+<#airport> a :Resource
+; :identity [ :source_column 2; ]
+; :type fly:Airport, transit:Stop, naptan:Airport
+; :relationship
+	[ :property rdf:type; :object_from <#airport_type> ],
+	[ :property spacerel:within; :object_from <#municipality> ],
+	[ :property spacerel:within; :object_from <#region> ],
+	[ :property spacerel:within; :object_from <#country> ],
+	[ :property spacerel:within; :object_from <#continent> ],
+	[ :property foaf:isPrimaryTopicOf; :object_from <#wikipedia_page> ],
+	[ :property foaf:isPrimaryTopicOf; :object_from <#ourairports_page> ],
+	[ :property owl:sameAs; :object_from <#dbpedia_resource> ],
+	[ :property owl:sameAs; :object_from <#naptan_resource> ]
+; :attribute
+	[ :property geo:lat; :source_column 5; :datatype xsd:float ],
+	[ :property geo:long; :source_column 6; :datatype xsd:float ],
+	[ :property geo:alt; :source_column 7; :datatype xsd:float; :process ( :feet_to_metres ); ],
+	[ :property georss:point; :source_columns (5 6); :source_column_glue " " ],
+	[ :property foaf:name; :source_column 4; :language "en" ],
+	[ :property fly:icao_code; :source_column 2 ],
+	[ :property fly:scheduled_service; :source_column 12; :lookup <#boolean_lookup> ]
+.
+
+<#airport_type> a :Resource
+; :identity [ :source_column 3; :process ( :normalise :title_case ); :base_uri "http://data.kasabi.com/dataset/airports/schema/" ]
+; :type rdfs:Class
+; :attribute
+	[
+		:property rdfs:label;
+		:source_column 3;
+		:process ( :regex :title_case );
+		:regex_match "_";
+		:regex_output " ";
+	]
+.
+
+<#continent> a :Resource
+; :identity [
+	:source_column 8;
+	:base_uri "http://data.kasabi.com/dataset/world-geography/continents/"
+]
+.
+
+<#country> a :Resource
+; :identity [
+	:source_column 9;
+	:base_uri "http://data.kasabi.com/dataset/world-geography/countries/"
+]
+.
+
+<#region> a :Resource
+; :type places:Region
+; :identity [
+	:source_column 10;
+	:base_uri "http://data.kasabi.com/dataset/world-geography/regions/"
+	]
+; :relationship [ :property spacerel:contains; :object_from <#municipality> ]
+.
+
+<#municipality> a :Resource
+; :type places:Municipality
+; :identity [
+	:source_column 11;
+	:container "municipalities";
+	:process ( :flatten_utf8 :normalise );
+	]
+; :relationship [ :property spacerel:within; :object_from <#region> ]
+; :attribute [ :property rdfs:label; :source_column 11 ]
+.
+
+<#wikipedia_page> a :Resource
+; :type bibo:Webpage
+; :identity [
+	:source_column 17;
+	:base_uri "";
+	:process ( :regex );
+	:regex_match " ";
+	:regex_output "";
+	 ]
+.
+
+<#dbpedia_resource> a :Resource
+; :identity [
+	:source_resource <#wikipedia_page>;
+	:process ( :regex );
+	:regex_match "http://[^/]*/wiki/(.*)";
+	:regex_output "http://dbpedia.org/resource/${1}";
+	]
+.
+
+<#ourairports_page> a :Resource
+; :type bibo:Webpage
+; :identity [
+	:source_column 2;
+	:base_uri "";
+	:process ( :regex );
+	:regex_match "^(.*)$";
+	:regex_output "http://www.ourairports.com/airports/${1}/";
+	]
+.
+
+<#naptan_resource> a :Resource
+; :identity [
+	:source_column 14;
+	:base_uri "http://transport.data.gov.uk/id/airport/"
+	]
+.
+
+<#boolean_lookup> a :Lookup
+; :lookup_entry [ :lookup_key "yes"; :lookup_value "true"^^xsd:boolean ]
+; :lookup_entry [ :lookup_key "true"; :lookup_value "true"^^xsd:boolean ]
+; :lookup_entry [ :lookup_key "no"; :lookup_value "false"^^xsd:boolean ]
+; :lookup_entry [ :lookup_key "false"; :lookup_value "false"^^xsd:boolean ]
+.
+
+
+
+
+
+
+
+
+

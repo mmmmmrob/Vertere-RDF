@@ -3,7 +3,7 @@
 ini_set('memory_limit', '2048M');
 define('LIB_DIR', dirname(__FILE__) . '/lib/');
 define('MORIARTY_DIR', LIB_DIR.'moriarty/');
-define('MORIARTY_ARC_DIR', LIB_DIR.'arc/');
+define('MORIARTY_ARC_DIR', LIB_DIR.'arc2/');
 include_once MORIARTY_DIR.'moriarty.inc.php';
 include_once MORIARTY_DIR.'simplegraph.class.php';
 include_once 'inc/sequencegraph.class.php';
