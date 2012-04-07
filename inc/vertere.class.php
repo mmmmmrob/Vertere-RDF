@@ -22,7 +22,7 @@ class Vertere {
 		$uris = $this->create_uris($record);
 		$graph = new SimpleGraph();
 		$this->add_default_types($graph, $uris);
-		$this->create_relationships($graph, $uris);
+		$this->create_relationships($graph, $uris, $record);
 		$this->create_attributes($graph, $uris, $record);
 		return $graph;
 	}
@@ -104,22 +104,41 @@ class Vertere {
 		
 	}
 	
-	private function create_relationships(&$graph, $uris) {
+	private function create_relationships(&$graph, $uris, $record) {
 		foreach ( $this->resources as $resource ) {
 			$relationships = $this->spec->get_resource_triple_values($resource, NS_CONV.'relationship');
 			foreach ($relationships as $relationship) {
-				$this->create_relationship($graph, $uris, $resource, $relationship);
+				$this->create_relationship($graph, $uris, $resource, $relationship, $record);
 			}
 		}
 	}
 	
-	private function create_relationship(&$graph, $uris, $resource, $relationship) {
+	private function create_relationship(&$graph, $uris, $resource, $relationship, $record) {
 		$subject = $uris[$resource];
 		$property = $this->spec->get_first_resource($relationship, NS_CONV.'property');
+		
 		$object_from = $this->spec->get_first_resource($relationship, NS_CONV.'object_from');
-		$object = $uris[$object_from];
-		if ($subject && $property && $object) {
+		$identity = $this->spec->get_first_resource($relationship, NS_CONV.'identity');
+		
+		if ($object_from) {
+			$object = $uris[$object_from];
+			if ($subject && $property && $object) {
+				$graph->add_resource_triple($subject, $property, $object);
+			}
+		} else if ($identity) {
+			// we create a link in situ, from a colum value
+			// TODO: this should be merged with the create_uri() code
+			$source_column = $this->spec->get_first_literal($identity, NS_CONV.'source_column');
+			$source_column--;
+			$source_value = $record[$source_column];
+			if (empty($source_value)) { return; }
+			$base_uri = $this->spec->get_first_literal($identity, NS_CONV.'base_uri');
+			if ($base_uri === null) { $base_uri = $this->base_uri; }
+			$source_value = $this->process($identity, $source_value);
+			$object = "${base_uri}${source_value}" ;
 			$graph->add_resource_triple($subject, $property, $object);
+		} else {
+			return;
 		}
 	}
 	
