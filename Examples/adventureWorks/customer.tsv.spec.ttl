@@ -1,0 +1,195 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix scv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix schemaorg: <http://schema.org/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+
+# CUSTOMER = RDF::Vocabulary.new("#{BASE}customer/")
+# SALES_PERSON = RDF::Vocabulary.new("#{BASE}sales_person/")
+# COMPANY = RDF::Vocabulary.new("#{BASE}company/")
+# PHONES = RDF::Vocabulary.new("#{BASE}phones/")
+
+
+
+# 1  - customer id
+# 2  - name style (?!)
+# 3  - title
+# 4  - first name
+# 5  - middle name
+# 6  - last name
+# 7  - suffix
+# 8  - company name
+# 9  - sales person
+# 10  - email address
+# 11 - phone
+# 12 - password hash
+# 13 - password salt
+# 14 - row guid
+# 15 - last modified date
+
+<#> a :Spec ; 
+	:format :TSV ;
+	:header_rows 0 ;
+	:resource <#customer>, <#email>, <#phone>, <#affiliation>, <#sales_person> ;
+	:base_uri "http://data.kasabi.com/dataset/adventure_works/" ;
+.
+
+<#customer> a :Resource ;
+	:identity [ 
+		:source_column 1 ; 
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/customer/" ;
+	] ;
+	:type foaf:Person ;
+	:attribute
+		[ :property foaf:title; :source_column 3 ] ,
+		[ :property foaf:givenName; :source_column 4 ] ,
+		[ :property schemaorg:additionalName; :source_column 5 ] ,
+		[ :property foaf:familyName; :source_column 6 ] ,
+		[ :property schemaorg:honorificSuffix; :source_column 7 ] ,
+		[ 
+			:property foaf:name ; 
+		  	:source_columns (3 4 5 6 7) ; 
+		  	:source_column_glue " " ;
+			:source_column_filter "/./" ;
+		]
+	;
+	:relationship
+		[ :property foaf:mbox; :object_from <#email> ] ,
+		[ :property vcard:tel; :object_from <#phone> ] ,
+		[ :property schemaorg:worksFor; :object_from <#affiliation> ] ,
+		[ :property scv:sales_contact; :object_from <#sales_person> ]
+	;
+.
+
+<#email> a :Resource ;
+	:identity [ :source_column 10; :base_uri "mbox:" ] ;
+.
+
+<#phone> a :Resource ;
+	:identity [ 
+		:source_column 11 ;
+		:process ( :normalise );
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/phones/" ;
+	] ;
+	:type vcard:Work ;
+	:attribute 
+		[ :property rdf:value; :source_column 11 ] ;
+.
+
+<#affiliation> a :Resource ;
+	:identity [
+		:source_column 8 ;
+		:process ( :normalise :flatten_utf8 ) ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/company/" ;
+	] ;
+	:type foaf:Organization ;
+	:attribute 
+		[ :property foaf:name; :source_column 8 ] ;
+.
+
+<#sales_person> a :Resource ;
+	:identity [
+		:source_column 9 ;
+		:process ( :flatten_utf8 ) ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/sales_person/" ;
+	] ;
+	:type foaf:Person ;
+.
+
+# <#airport_type> a :Resource
+# ; :identity [ :source_column 3; :process ( :normalise :title_case ); :base_uri "http://data.kasabi.com/dataset/airports/schema/" ]
+# ; :type rdfs:Class
+# ; :attribute
+# 	[
+# 		:property rdfs:label;
+# 		:source_column 3;
+# 		:process ( :regex :title_case );
+# 		:regex_match "_";
+# 		:regex_output " ";
+# 	]
+# .
+# 
+# <#continent> a :Resource
+# ; :identity [
+# 	:source_column 8;
+# 	:base_uri "http://data.kasabi.com/dataset/world-geography/continents/"
+# ]
+# .
+# 
+# <#country> a :Resource
+# ; :identity [
+# 	:source_column 9;
+# 	:base_uri "http://data.kasabi.com/dataset/world-geography/countries/"
+# ]
+# .
+# 
+# <#region> a :Resource
+# ; :type places:Region
+# ; :identity [
+# 	:source_column 10;
+# 	:base_uri "http://data.kasabi.com/dataset/world-geography/regions/"
+# 	]
+# ; :relationship [ :property spacerel:contains; :object_from <#municipality> ]
+# .
+# 
+# <#municipality> a :Resource
+# ; :type places:Municipality
+# ; :identity [
+# 	:source_column 11;
+# 	:container "municipalities";
+# 	:process ( :flatten_utf8 :normalise );
+# 	]
+# ; :relationship [ :property spacerel:within; :object_from <#region> ]
+# ; :attribute [ :property rdfs:label; :source_column 11 ]
+# .
+# 
+# <#wikipedia_page> a :Resource
+# ; :type bibo:Webpage
+# ; :identity [
+# 	:source_column 17;
+# 	:base_uri "";
+# 	:process ( :regex );
+# 	:regex_match " ";
+# 	:regex_output "";
+# 	 ]
+# .
+# 
+# <#dbpedia_resource> a :Resource
+# ; :identity [
+# 	:source_resource <#wikipedia_page>;
+# 	:process ( :regex );
+# 	:regex_match "http://[^/]*/wiki/(.*)";
+# 	:regex_output "http://dbpedia.org/resource/${1}";
+# 	]
+# .
+# 
+# <#ourairports_page> a :Resource
+# ; :type bibo:Webpage
+# ; :identity [
+# 	:source_column 2;
+# 	:base_uri "";
+# 	:process ( :regex );
+# 	:regex_match "^(.*)$";
+# 	:regex_output "http://www.ourairports.com/airports/${1}/";
+# 	]
+# .
+# 
+# <#naptan_resource> a :Resource
+# ; :identity [
+# 	:source_column 14;
+# 	:base_uri "http://transport.data.gov.uk/id/airport/"
+# 	]
+# .
+# 
+# <#boolean_lookup> a :Lookup
+# ; :lookup_entry [ :lookup_key "yes"; :lookup_value "true"^^xsd:boolean ]
+# ; :lookup_entry [ :lookup_key "true"; :lookup_value "true"^^xsd:boolean ]
+# ; :lookup_entry [ :lookup_key "no"; :lookup_value "false"^^xsd:boolean ]
+# ; :lookup_entry [ :lookup_key "false"; :lookup_value "false"^^xsd:boolean ]
+# .
