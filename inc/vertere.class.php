@@ -62,11 +62,19 @@ class Vertere {
 		} else if ($source_columns) {
 			$source_columns = $this->spec->get_list_values($source_columns);
 			$glue = $this->spec->get_first_literal($attribute, NS_CONV.'source_column_glue');
+			$filter = $this->spec->get_first_literal($attribute, NS_CONV.'source_column_filter');
+			if (!isset($filter)) { 
+				// default: accept anything
+				$filter = "//"; 
+			}
 			$source_values = array();
 			foreach ($source_columns as $source_column) {
 				$source_column = $source_column['value'];
 				$source_column--;
-				$source_values[] = $record[$source_column];
+				$value = $record[$source_column];
+				if (preg_match($filter, $value) != 0) {
+					$source_values[] = $value;
+				}
 			}
 			$source_value = implode($glue, $source_values);
 		} else {
