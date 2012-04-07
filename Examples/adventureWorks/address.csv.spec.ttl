@@ -1,0 +1,52 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix scv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix schemaorg: <http://schema.org/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+
+# CUSTOMER = RDF::Vocabulary.new("#{BASE}customer/")
+# SALES_PERSON = RDF::Vocabulary.new("#{BASE}sales_person/")
+# COMPANY = RDF::Vocabulary.new("#{BASE}company/")
+# PHONES = RDF::Vocabulary.new("#{BASE}phones/")
+
+
+
+# Address
+# 1 - Address ID
+# 2 - AddressLine1
+# 3 - AddressLine2 
+# 4 - City
+# 5 - StateProvince
+# 6 - CountryRegion
+# 7 - PostalCode
+# 8 - row GUID
+# 9 - modified date
+
+<#> a :Spec ; 
+	:format :TSV ;
+	:header_rows 0 ;
+	:resource <#address> ;
+	:base_uri "http://data.kasabi.com/dataset/adventure_works/addresses/" ;
+.
+
+<#address> a :Resource ;
+	:identity [ 
+		:source_column 1 ; 
+	] ;
+	:type vcard:Address ;
+	:attribute
+		[ :property vcard:street-address; :source_column 2 ] ,
+		[ :property vcard:extended-address; :source_column 3 ] ,
+		[ :property vcard:locality; :source_column 4 ] ,
+		[ :property vcard:region; :source_column 5 ] ,
+		[ :property vcard:country-name; :source_column 6 ] ,
+		[ :property vcard:postal-code; :source_column 7 ] 
+	;
+.
+

@@ -22,6 +22,12 @@ done
 echo Describing customers
 cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/Customer.tsv | ../vertere_mapper.php $PROJECT_FOLDER/customer.tsv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
 
+echo Describing addresses
+cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/Address.csv | ../vertere_mapper.php $PROJECT_FOLDER/address.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
+
+echo Linking customers with addresses
+cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/CustomerAddress.csv | ../vertere_mapper.php $PROJECT_FOLDER/customer_address.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
+
 echo Sorting and de-duping descriptions
 sort -u $PROJECT_FOLDER/output_data/full.rdf.nt > $PROJECT_FOLDER/output_data/adventureworks.rdf.nt
 

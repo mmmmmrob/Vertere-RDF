@@ -1,0 +1,57 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix scv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix schemaorg: <http://schema.org/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+
+# CustomerAddress
+# 1 - Customer ID
+# 2 - Address ID
+# 3 - Address Type
+# 4 - row GUID
+# 5 - modified data
+
+<#> a :Spec ; 
+	:format :TSV ;
+	:header_rows 0 ;
+	:resource <#customer>, <#address>, <#address_type> ;
+	:base_uri "http://data.kasabi.com/dataset/adventure_works/" ;
+.
+
+<#customer> a :Resource ;
+	:identity [ 
+		:source_column 1 ; 
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/customer/" ;
+	] ;
+	:type foaf:Person ;
+	:relationship
+		[ :property vcard:addr; :object_from <#address> ] 
+	;
+.
+
+<#address> a :Resource ;
+	:identity [ 
+		:source_column 2 ; 
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/addresses/" ;
+	] ;
+	:type vcard:Address ;
+	:relationship
+		[ :property rdf:type; :object_from <#address_type> ]
+	;
+.
+
+<#address_type> a :Resource ;
+	:identity [
+		:source_column 3 ;
+		:process ( :normalise :title_case ) ;
+		:base_uri "http://http://data.kasabi.com/dataset/adventure_works/schema/"
+	] ;
+	:type owl:Class ;
+	:attribute [ :property rdfs:label; :source_column 3  ] ;
+.
