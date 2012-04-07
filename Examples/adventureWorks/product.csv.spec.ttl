@@ -1,0 +1,73 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix scv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix schemaorg: <http://schema.org/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix gr: <http://purl.org/goodrelations/v1#> .
+
+#  1 - ProductID
+#  2 - Name
+#  3 - ProductNumber
+#  4 - Color
+#  5 - StandardCost
+#  6 - ListPrice
+#  7 - Size
+#  8 - Weight
+#  9 - ProductModelID
+# 10 - ProductCategoryID
+# 11 - SellStartDate
+# 12 - SellEndData
+# 13 - DiscontinuedDate
+# 14 - ThumbnailPhoto
+# 15 - ThumbnailPhotoFileName
+# 16 - rowguid
+# 17 - ModifiedDate 
+
+<#> a :Spec ; 
+	:format :TSV ;
+	:header_rows 0 ;
+	:resource <#product>, <#weight>, <#category> ;
+	:base_uri "http://data.kasabi.com/dataset/adventure_works/products/" ;
+.
+
+<#product> a :Resource ;
+	:identity [ 
+		:source_column 1 ; 
+	] ;
+	:type gr:Individual ;
+	:attribute
+		[ :property rdfs:label; :source_column 2 ]
+	;
+	:relationship
+		[ :property gr:weight; :object_from <#weight> ] ,
+		[ :property rdf:type; :object_from <#category> ] 
+	;
+.
+
+<#weight> a :Resource ;
+	:identity [
+		:source_column 8 ;
+		:process ( :regex ) ;
+		:regex_match "^(.*)$";
+		:regex_output "${1}gr";
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/weights/" ;
+	] ;
+	:type gr:QuantitativeValueFloat ;
+	:attribute 
+		[ :property gr:hasValue ; :source_column 8 ; :datatype xsd:float ] ,
+		[ :property gr:hasUnitOfMeasurement ; :value "GRM" ; :datatype xsd:string ]
+.
+
+<#category> a :Resource ;
+	:identity [ 
+		:source_column 10 ; 
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/product_categories/" ;
+	] ;
+	:type owl:Class ;
+.

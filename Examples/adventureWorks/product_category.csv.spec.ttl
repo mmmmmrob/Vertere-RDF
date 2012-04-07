@@ -1,0 +1,43 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix scv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix schemaorg: <http://schema.org/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix gr: <http://purl.org/goodrelations/v1#> .
+
+# 1 - ProductCategoryID
+# 2 - ParentProductCategoryID
+# 3 - Name
+# 4 - rowguid
+# 5 - ModifiedDate 
+
+<#> a :Spec ; 
+	:format :TSV ;
+	:header_rows 0 ;
+	:resource <#category> ;
+	:base_uri "http://data.kasabi.com/dataset/adventure_works/product_categories/" ;
+.
+
+<#category> a :Resource ;
+	:identity [ 
+		:source_column 1 ; 
+	] ;
+	:type owl:Class ;
+	:attribute
+		[ :property rdfs:label; :source_column 3 ]
+	;
+	:relationship
+		[ 
+			:property rdfs:subClassOf; 
+			:identity [ 
+				:source_column 2 ; 
+			] ;
+		]
+	;
+.
