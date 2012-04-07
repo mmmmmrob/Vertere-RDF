@@ -68,7 +68,7 @@
 .
 
 <#email> a :Resource ;
-	:identity [ :source_column 10; :base_uri "mbox:" ] ;
+	:identity [ :source_column 10; :base_uri "mailto:" ] ;
 .
 
 <#phone> a :Resource ;
