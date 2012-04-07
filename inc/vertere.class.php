@@ -54,9 +54,13 @@ class Vertere {
 		$language = $this->spec->get_first_literal($attribute, NS_CONV.'language');
 		$datatype = $this->spec->get_first_resource($attribute, NS_CONV.'datatype');
 
+		$value = $this->spec->get_first_literal($attribute, NS_CONV.'value');
 		$source_column = $this->spec->get_first_literal($attribute, NS_CONV.'source_column');
 		$source_columns = $this->spec->get_first_resource($attribute, NS_CONV.'source_columns');
-		if ($source_column) {
+
+		if ($value) {
+			$source_value = $value;
+		} else if ($source_column) {
 			$source_column--;
 			$source_value = $record[$source_column];
 		} else if ($source_columns) {
