@@ -119,12 +119,10 @@ class Vertere {
 		
 		$object_from = $this->spec->get_first_resource($relationship, NS_CONV.'object_from');
 		$identity = $this->spec->get_first_resource($relationship, NS_CONV.'identity');
+		$value = $this->spec->get_first_resource($relationship, NS_CONV.'value');
 		
 		if ($object_from) {
 			$object = $uris[$object_from];
-			if ($subject && $property && $object) {
-				$graph->add_resource_triple($subject, $property, $object);
-			}
 		} else if ($identity) {
 			// we create a link in situ, from a colum value
 			// TODO: this should be merged with the create_uri() code
@@ -136,9 +134,13 @@ class Vertere {
 			if ($base_uri === null) { $base_uri = $this->base_uri; }
 			$source_value = $this->process($identity, $source_value);
 			$object = "${base_uri}${source_value}" ;
-			$graph->add_resource_triple($subject, $property, $object);
+		} else if ($value) {
+			$object = $value ;
 		} else {
 			return;
+		}
+		if ($subject && $property && $object) {
+			$graph->add_resource_triple($subject, $property, $object);
 		}
 	}
 	
@@ -268,7 +270,13 @@ class Vertere {
 					case NS_CONV.'round':
 						$value = round($value);
 						break;
-
+						
+					case NS_CONV.'substr':
+						$substr_start = $this->spec->get_first_literal($resource, NS_CONV.'substr_start');
+						$substr_length = $this->spec->get_first_literal($resource, NS_CONV.'substr_length');
+						$value = substr($value, $substr_start, $substr_length);
+						break;
+						
 					default:
 						throw new Exception("Unknown process requested: ${step}");
 				}
