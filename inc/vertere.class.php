@@ -119,7 +119,8 @@ class Vertere {
 		
 		$object_from = $this->spec->get_first_resource($relationship, NS_CONV.'object_from');
 		$identity = $this->spec->get_first_resource($relationship, NS_CONV.'identity');
-		$value = $this->spec->get_first_resource($relationship, NS_CONV.'value');
+		$object = $this->spec->get_first_resource($relationship, NS_CONV.'object');
+		$new_subject = $this->spec->get_first_resource($relationship, NS_CONV.'subject');
 		
 		if ($object_from) {
 			$object = $uris[$object_from];
@@ -134,13 +135,15 @@ class Vertere {
 			if ($base_uri === null) { $base_uri = $this->base_uri; }
 			$source_value = $this->process($identity, $source_value);
 			$object = "${base_uri}${source_value}" ;
-		} else if ($value) {
-			$object = $value ;
-		} else {
-			return;
+		} else if ($new_subject) {
+			$object = $subject ;
+			$subject = $new_subject ;
 		}
+		 
 		if ($subject && $property && $object) {
 			$graph->add_resource_triple($subject, $property, $object);
+		} else {
+				return;
 		}
 	}
 	
