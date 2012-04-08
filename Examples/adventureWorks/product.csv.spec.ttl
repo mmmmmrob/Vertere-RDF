@@ -7,7 +7,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-@prefix scv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix adv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
 @prefix schemaorg: <http://schema.org/> .
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix gr: <http://purl.org/goodrelations/v1#> .
@@ -33,7 +33,7 @@
 <#> a :Spec ; 
 	:format :TSV ;
 	:header_rows 0 ;
-	:resource <#product>, <#weight>, <#category>, <#colour>, <#offering>, <#price> ;
+	:resource <#product>, <#weight>, <#category>, <#colour>, <#offering>, <#price>, <#adventureworks> ;
 	:base_uri "http://data.kasabi.com/dataset/adventure_works/products/" ;
 .
 
@@ -47,7 +47,7 @@
 	;
 	:relationship
 		[ :property gr:weight; :object_from <#weight> ] ,
-		[ :property scv:colour; :object_from <#colour> ] ,
+		[ :property adv:colour; :object_from <#colour> ] ,
 		[ :property rdf:type; :object_from <#category> ] 
 	;
 .
@@ -103,6 +103,7 @@
 		  :regex_output "T" ;
 		  :substr_start 0 ;
 		  :substr_length 19 ;
+		  :datatype xsd:dateTime ;
 	  	] ,
 		[ :property gr:validThrough ;
 		  :source_column 12 ;
@@ -111,12 +112,14 @@
 		  :regex_output "T" ;
 		  :substr_start 0 ;
 		  :substr_length 19 ;
+		  :datatype xsd:dateTime ;
 	 	]
 	;
 	:relationship
 		[ :property gr:includesObject; :object_from <#product> ] ,
 		[ :property gr:hasPriceSpecification; :object_from <#price> ] ,
-		[ :property gr:hasBusinessFunction; :value gr:Sell ]
+		[ :property gr:hasBusinessFunction; :object gr:Sell ] ,
+		[ :property gr:offers; :subject <http://data.kasabi.com/dataset/adventure_works/companies/adventure_works> ]
 	;
 .
 

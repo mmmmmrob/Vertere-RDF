@@ -6,16 +6,10 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-@prefix scv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix adv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
 @prefix schemaorg: <http://schema.org/> .
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
-
-# CUSTOMER = RDF::Vocabulary.new("#{BASE}customer/")
-# SALES_PERSON = RDF::Vocabulary.new("#{BASE}sales_person/")
-# COMPANY = RDF::Vocabulary.new("#{BASE}company/")
-# PHONES = RDF::Vocabulary.new("#{BASE}phones/")
-
-
+@prefix gr: <http://purl.org/goodrelations/v1#> .
 
 # 1  - customer id
 # 2  - name style (?!)
@@ -43,7 +37,7 @@
 <#customer> a :Resource ;
 	:identity [ 
 		:source_column 1 ; 
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/customer/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/customers/" ;
 	] ;
 	:type foaf:Person ;
 	:attribute
@@ -63,7 +57,7 @@
 		[ :property foaf:mbox; :object_from <#email> ] ,
 		[ :property vcard:tel; :object_from <#phone> ] ,
 		[ :property schemaorg:worksFor; :object_from <#affiliation> ] ,
-		[ :property scv:sales_contact; :object_from <#sales_person> ]
+		[ :property adv:sales_contact; :object_from <#sales_person> ]
 	;
 .
 
@@ -86,20 +80,25 @@
 	:identity [
 		:source_column 8 ;
 		:process ( :normalise :flatten_utf8 ) ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/company/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/companies/" ;
 	] ;
-	:type foaf:Organization ;
+	:type foaf:Organization, gr:BusinessEntity ;
 	:attribute 
-		[ :property foaf:name; :source_column 8 ] ;
+		[ :property foaf:name; :source_column 8 ] ,
+		[ :property gr:legalName; :source_column 8 ]
+	;
 .
 
 <#sales_person> a :Resource ;
 	:identity [
 		:source_column 9 ;
 		:process ( :flatten_utf8 ) ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/sales_person/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/sales_persons/" ;
 	] ;
 	:type foaf:Person ;
+	:relationship
+		[ :property schemaorg:worksFor; :object <http://data.kasabi.com/dataset/adventure_works/companies/adventure_works> ]
+	;
 .
 
 # <#airport_type> a :Resource
