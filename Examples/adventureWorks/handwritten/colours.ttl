@@ -1,0 +1,31 @@
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+<http://data.kasabi.com/dataset/adventure_works/colours/Black>
+    owl:sameAs <http://dbpedia.org/resource/Black> ;
+    foaf:isPrimaryTopicOf <http://en.wikipedia.org/wiki/Black> .
+
+<http://data.kasabi.com/dataset/adventure_works/colours/Blue>
+    owl:sameAs <http://dbpedia.org/resource/Blue> ;
+    foaf:isPrimaryTopicOf <http://en.wikipedia.org/wiki/Blue> .
+
+<http://data.kasabi.com/dataset/adventure_works/colours/Grey>
+    owl:sameAs <http://dbpedia.org/resource/Grey> ;
+    foaf:isPrimaryTopicOf <http://en.wikipedia.org/wiki/Grey> .
+
+<http://data.kasabi.com/dataset/adventure_works/colours/Red>
+    owl:sameAs <http://dbpedia.org/resource/Red> ;
+    foaf:isPrimaryTopicOf <http://en.wikipedia.org/wiki/Red> .
+
+<http://data.kasabi.com/dataset/adventure_works/colours/Silver>
+    owl:sameAs <http://dbpedia.org/resource/Silver_%28color%29> ;
+    foaf:isPrimaryTopicOf <http://en.wikipedia.org/wiki/Silver_(color)> .
+
+<http://data.kasabi.com/dataset/adventure_works/colours/White>
+    owl:sameAs <http://dbpedia.org/resource/White> ;
+    foaf:isPrimaryTopicOf <http://en.wikipedia.org/wiki/White> .
+
+<http://data.kasabi.com/dataset/adventure_works/colours/Yellow>
+    owl:sameAs <http://dbpedia.org/resource/Yellow> ;
+    foaf:isPrimaryTopicOf <http://en.wikipedia.org/wiki/Yellow> .
+

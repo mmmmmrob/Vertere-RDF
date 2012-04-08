@@ -1,4 +1,5 @@
 @prefix : <http://example.com/schema/data_conversion#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 @prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -32,7 +33,7 @@
 <#> a :Spec ; 
 	:format :TSV ;
 	:header_rows 0 ;
-	:resource <#product>, <#weight>, <#category> ;
+	:resource <#product>, <#weight>, <#category>, <#colour>, <#offering>, <#price> ;
 	:base_uri "http://data.kasabi.com/dataset/adventure_works/products/" ;
 .
 
@@ -46,6 +47,7 @@
 	;
 	:relationship
 		[ :property gr:weight; :object_from <#weight> ] ,
+		[ :property scv:colour; :object_from <#colour> ] ,
 		[ :property rdf:type; :object_from <#category> ] 
 	;
 .
@@ -54,7 +56,7 @@
 	:identity [
 		:source_column 8 ;
 		:process ( :regex ) ;
-		:regex_match "^(.*)$";
+		:regex_match "^(.+)$";
 		:regex_output "${1}gr";
 		:base_uri "http://data.kasabi.com/dataset/adventure_works/weights/" ;
 	] ;
@@ -71,3 +73,86 @@
 	] ;
 	:type owl:Class ;
 .
+
+<#colour> a :Resource ;
+	:identity [
+		:source_column 4 ;
+		:process ( :regex ) ;
+		:regex_match "/";
+		:regex_output "-";
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/colours/" ;
+	] ;
+	:type owl:Thing ;
+	:attribute
+		[ :property rdfs:label; :source_column 4 ]
+	;
+.
+
+<#offering> a :Resource ;
+	:identity [
+		:source_column 1 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/offerings/" ;
+	] ;
+	:type gr:Offering ;
+	:attribute
+		[ :property gr:name; :source_column 2 ] ,
+		[ :property gr:validFrom ;
+		  :source_column 11 ;
+		  :process ( :regex :substr ) ;
+		  :regex_match " " ;
+		  :regex_output "T" ;
+		  :substr_start 0 ;
+		  :substr_length 19 ;
+	  	] ,
+		[ :property gr:validThrough ;
+		  :source_column 12 ;
+		  :process ( :regex :substr ) ;
+		  :regex_match " " ;
+		  :regex_output "T" ;
+		  :substr_start 0 ;
+		  :substr_length 19 ;
+	 	]
+	;
+	:relationship
+		[ :property gr:includesObject; :object_from <#product> ] ,
+		[ :property gr:hasPriceSpecification; :object_from <#price> ] ,
+		[ :property gr:hasBusinessFunction; :value gr:Sell ]
+	;
+.
+
+<#price> a :Resource ;
+	:identity [
+		:source_column 6 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
+	] ;
+	:type gr:UnitPriceSpecification ;
+	:attribute 
+		[ :property gr:hasCurrencyValue; :source_column 6; :datatype xsd:float ] ,
+		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
+	;
+.
+
+# This would be nice, but won't work for many cases, e.g. "Silver-Black", "Silver" or "Multi"
+# instead, put in some hand-created RDF
+#
+# <#wikipedia_page> a :Resource ; 
+# 	:type bibo:Webpage ; 
+# 	:identity [
+# 		:source_column 4;
+# 		:base_uri "http://en.wikipedia.org/wiki/";
+# 		:process ( :regex );
+# 		:regex_match "/";
+# 		:regex_output "-";
+# 	 ]
+# .
+# 
+# <#dbpedia_resource> a :Resource ; 
+# 	:identity [
+# 		:source_resource <#wikipedia_page>;
+# 		:base_uri "";
+# 		:process ( :regex );
+# 		:regex_match "http://[^/]*/wiki/(.*)";
+# 		:regex_output "http://dbpedia.org/resource/${1}";
+# 	]
+# .
+# 
