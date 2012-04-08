@@ -6,7 +6,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-@prefix scv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix adv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
 @prefix schemaorg: <http://schema.org/> .
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 

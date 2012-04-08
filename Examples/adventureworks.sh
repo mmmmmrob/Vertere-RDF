@@ -19,20 +19,23 @@ do
 done
 
 
-echo Describing customers
-cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/Customer.tsv | ../vertere_mapper.php $PROJECT_FOLDER/customer.tsv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
+# echo Describing customers
+# cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/Customer.tsv | ../vertere_mapper.php $PROJECT_FOLDER/customer.tsv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
+# 
+# echo Describing addresses
+# cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/Address.csv | ../vertere_mapper.php $PROJECT_FOLDER/address.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
+# 
+# echo Linking customers with addresses
+# cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/CustomerAddress.csv | ../vertere_mapper.php $PROJECT_FOLDER/customer_address.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
+# 
+# echo Describing product categories
+# cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/ProductCategory.csv | ../vertere_mapper.php $PROJECT_FOLDER/product_category.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
+# 
+# echo Describing products
+# cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/Product.tsv | ../vertere_mapper.php $PROJECT_FOLDER/product.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
 
-echo Describing addresses
-cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/Address.csv | ../vertere_mapper.php $PROJECT_FOLDER/address.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
-
-echo Linking customers with addresses
-cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/CustomerAddress.csv | ../vertere_mapper.php $PROJECT_FOLDER/customer_address.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
-
-echo Describing product categories
-cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/ProductCategory.csv | ../vertere_mapper.php $PROJECT_FOLDER/product_category.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
-
-echo Describing products
-cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/Product.tsv | ../vertere_mapper.php $PROJECT_FOLDER/product.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
+echo Describing orders
+cat $PROJECT_FOLDER/AdventureWorks_2008R2_LT/SalesOrderHeader.csv | ../vertere_mapper.php $PROJECT_FOLDER/sales_order_header.csv.spec.ttl >> $PROJECT_FOLDER/output_data/full.rdf.nt
 
 echo Sorting and de-duping descriptions
 sort -u $PROJECT_FOLDER/output_data/full.rdf.nt > $PROJECT_FOLDER/output_data/adventureworks.rdf.nt

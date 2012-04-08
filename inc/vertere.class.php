@@ -85,8 +85,6 @@ class Vertere {
 			return;
 		}
 		
-		if (empty($source_value)) { return; }
-
 		$lookup = $this->spec->get_first_resource($attribute, NS_CONV.'lookup');
 		if($lookup != null) {
 			$lookup_value = $this->lookup($lookup, $source_value);
@@ -98,6 +96,8 @@ class Vertere {
 			}
 		}
 		
+		if (empty($source_value)) { return; }
+
 		$source_value = $this->process($attribute, $source_value);
 		
 		$graph->add_literal_triple($subject, $property, $source_value, $language, $datatype);

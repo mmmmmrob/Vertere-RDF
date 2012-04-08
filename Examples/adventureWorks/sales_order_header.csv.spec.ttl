@@ -1,0 +1,270 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix adv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix schemaorg: <http://schema.org/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix gr: <http://purl.org/goodrelations/v1#> .
+
+#  1 - SalesOrderID
+#  2 - RevisionNumber
+#  3 - OrderDate
+#  4 - DueDate
+#  5 - ShipDate
+#  6 - Status
+#  7 - OnlineOrderFlag
+#  8 - SalesOrderNumber
+#  9 - PurchaseOrderNumber
+# 10 - AccountNumber
+# 11 - CustomerID
+# 12 - ShipToAddressID
+# 13 - BillToAddressID 
+# 14 - ShipMethod
+# 15 - CreditCardApprovalCode
+# 16 - SubTotal
+# 17 - TaxAmt
+# 18 - Freight
+# 19 - TotalDue
+# 20 - Comment
+# 21 - rowguid
+# 22 - ModifiedDate
+
+<#> a :Spec ; 
+	:format :TSV ;
+	:header_rows 0 ;
+	:resource <#sales_order>, <#customer>, <#billing_address>, <#shipping_address>, <#sub_total>, <#tax_cost>, <#shipping_cost>, <#total> ;
+	:base_uri "http://data.kasabi.com/dataset/adventure_works/sales_orders/" ;
+.
+
+<#sales_order> a :Resource ;
+	:identity [
+		:source_column 1 ;
+	] ;
+	:attribute
+		[ :property adv:revisonNumber ; :source_column 2 ; :datatype xsd:integer ] ,
+		[ :property adv:orderStatus ; :source_column 6 ; :datatype xsd:integer ] ,
+		[ :property adv:onlineOrder ; :source_column 7 ; :lookup <#boolean_lookup> ; :datatype xsd:boolean ] ,
+		[ :property adv:salesOrderNumber ; :source_column 8 ] ,
+		[ :property adv:purchaseOrderNumber ; :source_column 9 ] ,
+		[ :property adv:accountNumber ; :source_column 10 ] ,
+		[ :property adv:shippingMethod ; :source_column 14 ] ,
+		[ :property adv:creditCardApprovalCode ; :source_column 15 ] ,
+		[ :property adv:orderDate ; 
+		  :source_column 3 ; 
+		  :process ( :regex :substr ) ;
+		  :regex_match " " ;
+		  :regex_output "T" ;
+		  :substr_start 0 ;
+		  :substr_length 19 ;
+		  :datatype xsd:dateTime ;
+	  	] ,
+		[ :property adv:dueDate ; 
+		  :source_column 4 ; 
+		  :process ( :regex :substr ) ;
+		  :regex_match " " ;
+		  :regex_output "T" ;
+		  :substr_start 0 ;
+		  :substr_length 19 ;
+		  :datatype xsd:dateTime ;
+	  	] ,
+		[ :property adv:shipDate ; 
+		  :source_column 5 ; 
+		  :process ( :regex :substr ) ;
+		  :regex_match " " ;
+		  :regex_output "T" ;
+		  :substr_start 0 ;
+		  :substr_length 19 ;
+		  :datatype xsd:dateTime ;
+	  	]
+	;
+	:relationship
+		[ :property adv:customer ; :object_from <#customer> ] ,
+		[ :property adv:subTotal ; :object_from <#sub_total> ] ,
+		[ :property adv:taxCost ; :object_from <#tax_cost> ] ,
+		[ :property adv:shippingCost ; :object_from <#shipping_cost> ] ,
+		[ :property adv:total ; :object_from <#total> ] ,
+		[ :property adv:shippingAddress ; :object_from <#shipping_address> ] ,
+		[ :property adv:billingAddress ; :object_from <#billing_address> ]
+	;
+.
+
+<#customer> a :Resource ;
+	:identity [ 
+		:source_column 11 ; 
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/customers/" ;
+	] ;
+	:type foaf:Person ;
+.
+
+<#boolean_lookup> a :Lookup ;
+	:lookup_entry [ :lookup_key "1"; :lookup_value "true" ] ;
+	:lookup_entry [ :lookup_key "0"; :lookup_value "false" ] ;
+.
+
+<#shipping_address> a :Resource ;
+	:identity [
+		:source_column 12 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/addresses/" ;
+	] ;
+	:type vcard:Address ;
+.
+
+<#billing_address> a :Resource ;
+	:identity [
+		:source_column 13 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/addresses/" ;
+	] ;
+	:type vcard:Address ;
+.
+
+<#sub_total> a :Resource ;
+	:identity [
+		:source_column 16 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/sub_totals/" ;
+	] ;
+	:type gr:UnitPriceSpecification ;
+	:attribute 
+		[ :property gr:hasCurrencyValue; :source_column 16; :datatype xsd:float ] ,
+		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
+	;
+.
+
+<#tax_cost> a :Resource ;
+	:identity [
+		:source_column 17 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/tax_costs/" ;
+	] ;
+	:type gr:PriceSpecification ;
+	:attribute 
+		[ :property gr:hasCurrencyValue; :source_column 17; :datatype xsd:float ] ,
+		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
+	;
+.
+
+<#shipping_cost> a :Resource ;
+	:identity [
+		:source_column 18 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/shipping_costs/" ;
+	] ;
+	:type gr:DeliveryChargeSpecification ;
+	:attribute 
+		[ :property gr:hasCurrencyValue; :source_column 18; :datatype xsd:float ] ,
+		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
+	;
+.
+
+<#total> a :Resource ;
+	:identity [
+		:source_column 18 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/totals/" ;
+	] ;
+	:type gr:UnitPriceSpecification ;
+	:attribute 
+		[ :property gr:hasCurrencyValue; :source_column 18; :datatype xsd:float ] ,
+		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ] ,
+		[ :property gr:valueAddedTaxIncluded; :value "true" ; :datatype xsd:boolean ]
+	;
+.
+
+# <#product> a :Resource ;
+# 	:identity [ 
+# 		:source_column 1 ; 
+# 	] ;
+# 	:type gr:Individual ;
+# 	:attribute
+# 		[ :property rdfs:label; :source_column 2 ]
+# 	;
+# 	:relationship
+# 		[ :property gr:weight; :object_from <#weight> ] ,
+# 		[ :property adv:colour; :object_from <#colour> ] ,
+# 		[ :property rdf:type; :object_from <#category> ] 
+# 	;
+# .
+# 
+# <#weight> a :Resource ;
+# 	:identity [
+# 		:source_column 8 ;
+# 		:process ( :regex ) ;
+# 		:regex_match "^(.+)$";
+# 		:regex_output "${1}gr";
+# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/weights/" ;
+# 	] ;
+# 	:type gr:QuantitativeValueFloat ;
+# 	:attribute 
+# 		[ :property gr:hasValue ; :source_column 8 ; :datatype xsd:float ] ,
+# 		[ :property gr:hasUnitOfMeasurement ; :value "GRM" ; :datatype xsd:string ]
+# .
+# 
+# <#category> a :Resource ;
+# 	:identity [ 
+# 		:source_column 10 ; 
+# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/product_categories/" ;
+# 	] ;
+# 	:type owl:Class ;
+# .
+# 
+# <#colour> a :Resource ;
+# 	:identity [
+# 		:source_column 4 ;
+# 		:process ( :regex ) ;
+# 		:regex_match "/";
+# 		:regex_output "-";
+# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/colours/" ;
+# 	] ;
+# 	:type owl:Thing ;
+# 	:attribute
+# 		[ :property rdfs:label; :source_column 4 ]
+# 	;
+# .
+# 
+# <#offering> a :Resource ;
+# 	:identity [
+# 		:source_column 1 ;
+# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/offerings/" ;
+# 	] ;
+# 	:type gr:Offering ;
+# 	:attribute
+# 		[ :property gr:name; :source_column 2 ] ,
+# 		[ :property gr:validFrom ;
+# 		  :source_column 11 ;
+# 		  :process ( :regex :substr ) ;
+# 		  :regex_match " " ;
+# 		  :regex_output "T" ;
+# 		  :substr_start 0 ;
+# 		  :substr_length 19 ;
+# 	  	] ,
+# 		[ :property gr:validThrough ;
+# 		  :source_column 12 ;
+# 		  :process ( :regex :substr ) ;
+# 		  :regex_match " " ;
+# 		  :regex_output "T" ;
+# 		  :substr_start 0 ;
+# 		  :substr_length 19 ;
+# 	 	]
+# 	;
+# 	:relationship
+# 		[ :property gr:includesObject; :object_from <#product> ] ,
+# 		[ :property gr:hasPriceSpecification; :object_from <#price> ] ,
+# 		[ :property gr:hasBusinessFunction; :object gr:Sell ] ,
+# 		[ :property gr:offers; :subject <http://data.kasabi.com/dataset/adventure_works/companies/adventure_works> ]
+# 	;
+# .
+# 
+# <#price> a :Resource ;
+# 	:identity [
+# 		:source_column 6 ;
+# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
+# 	] ;
+# 	:type gr:UnitPriceSpecification ;
+# 	:attribute 
+# 		[ :property gr:hasCurrencyValue; :source_column 6; :datatype xsd:float ] ,
+# 		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
+# 	;
+# .
+
