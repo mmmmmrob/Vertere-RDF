@@ -7,7 +7,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-@prefix adv: <http://http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix adv: <http://data.kasabi.com/dataset/adventure_works/schema/> .
 @prefix schemaorg: <http://schema.org/> .
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
 @prefix gr: <http://purl.org/goodrelations/v1#> .
@@ -46,6 +46,7 @@
 	:identity [
 		:source_column 1 ;
 	] ;
+	:type adv:SalesOrder ;
 	:attribute
 		[ :property adv:revisonNumber ; :source_column 2 ; :datatype xsd:integer ] ,
 		[ :property adv:orderStatus ; :source_column 6 ; :datatype xsd:integer ] ,
@@ -126,9 +127,9 @@
 <#sub_total> a :Resource ;
 	:identity [
 		:source_column 16 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/sub_totals/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
 	] ;
-	:type gr:UnitPriceSpecification ;
+	:type gr:PriceSpecification ;
 	:attribute 
 		[ :property gr:hasCurrencyValue; :source_column 16; :datatype xsd:float ] ,
 		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
@@ -138,7 +139,7 @@
 <#tax_cost> a :Resource ;
 	:identity [
 		:source_column 17 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/tax_costs/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
 	] ;
 	:type gr:PriceSpecification ;
 	:attribute 
@@ -150,7 +151,7 @@
 <#shipping_cost> a :Resource ;
 	:identity [
 		:source_column 18 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/shipping_costs/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
 	] ;
 	:type gr:DeliveryChargeSpecification ;
 	:attribute 
@@ -162,7 +163,7 @@
 <#total> a :Resource ;
 	:identity [
 		:source_column 18 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/totals/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
 	] ;
 	:type gr:UnitPriceSpecification ;
 	:attribute 
@@ -171,100 +172,4 @@
 		[ :property gr:valueAddedTaxIncluded; :value "true" ; :datatype xsd:boolean ]
 	;
 .
-
-# <#product> a :Resource ;
-# 	:identity [ 
-# 		:source_column 1 ; 
-# 	] ;
-# 	:type gr:Individual ;
-# 	:attribute
-# 		[ :property rdfs:label; :source_column 2 ]
-# 	;
-# 	:relationship
-# 		[ :property gr:weight; :object_from <#weight> ] ,
-# 		[ :property adv:colour; :object_from <#colour> ] ,
-# 		[ :property rdf:type; :object_from <#category> ] 
-# 	;
-# .
-# 
-# <#weight> a :Resource ;
-# 	:identity [
-# 		:source_column 8 ;
-# 		:process ( :regex ) ;
-# 		:regex_match "^(.+)$";
-# 		:regex_output "${1}gr";
-# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/weights/" ;
-# 	] ;
-# 	:type gr:QuantitativeValueFloat ;
-# 	:attribute 
-# 		[ :property gr:hasValue ; :source_column 8 ; :datatype xsd:float ] ,
-# 		[ :property gr:hasUnitOfMeasurement ; :value "GRM" ; :datatype xsd:string ]
-# .
-# 
-# <#category> a :Resource ;
-# 	:identity [ 
-# 		:source_column 10 ; 
-# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/product_categories/" ;
-# 	] ;
-# 	:type owl:Class ;
-# .
-# 
-# <#colour> a :Resource ;
-# 	:identity [
-# 		:source_column 4 ;
-# 		:process ( :regex ) ;
-# 		:regex_match "/";
-# 		:regex_output "-";
-# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/colours/" ;
-# 	] ;
-# 	:type owl:Thing ;
-# 	:attribute
-# 		[ :property rdfs:label; :source_column 4 ]
-# 	;
-# .
-# 
-# <#offering> a :Resource ;
-# 	:identity [
-# 		:source_column 1 ;
-# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/offerings/" ;
-# 	] ;
-# 	:type gr:Offering ;
-# 	:attribute
-# 		[ :property gr:name; :source_column 2 ] ,
-# 		[ :property gr:validFrom ;
-# 		  :source_column 11 ;
-# 		  :process ( :regex :substr ) ;
-# 		  :regex_match " " ;
-# 		  :regex_output "T" ;
-# 		  :substr_start 0 ;
-# 		  :substr_length 19 ;
-# 	  	] ,
-# 		[ :property gr:validThrough ;
-# 		  :source_column 12 ;
-# 		  :process ( :regex :substr ) ;
-# 		  :regex_match " " ;
-# 		  :regex_output "T" ;
-# 		  :substr_start 0 ;
-# 		  :substr_length 19 ;
-# 	 	]
-# 	;
-# 	:relationship
-# 		[ :property gr:includesObject; :object_from <#product> ] ,
-# 		[ :property gr:hasPriceSpecification; :object_from <#price> ] ,
-# 		[ :property gr:hasBusinessFunction; :object gr:Sell ] ,
-# 		[ :property gr:offers; :subject <http://data.kasabi.com/dataset/adventure_works/companies/adventure_works> ]
-# 	;
-# .
-# 
-# <#price> a :Resource ;
-# 	:identity [
-# 		:source_column 6 ;
-# 		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
-# 	] ;
-# 	:type gr:UnitPriceSpecification ;
-# 	:attribute 
-# 		[ :property gr:hasCurrencyValue; :source_column 6; :datatype xsd:float ] ,
-# 		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
-# 	;
-# .
 

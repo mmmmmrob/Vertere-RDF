@@ -1,0 +1,103 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix geo: <http://www.w3.org/2003/01/geo/wgs84_pos#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix adv: <http://data.kasabi.com/dataset/adventure_works/schema/> .
+@prefix schemaorg: <http://schema.org/> .
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+@prefix gr: <http://purl.org/goodrelations/v1#> .
+
+# 1 - SalesOrderID
+# 2 - SalesOrderDetailID
+# 3 - OrderQty
+# 4 - ProductID
+# 5 - UnitPrice
+# 6 - UnitPriceDiscount
+# 7 - LineTotal
+# 8 - rowguid
+# 9 - ModifiedDate
+
+
+<#> a :Spec ; 
+	:format :TSV ;
+	:header_rows 0 ;
+	:resource <#sales_order>, <#sales_order_detail>, <#product>, <#price>, <#discount>, <#total> ;
+	:base_uri "http://data.kasabi.com/dataset/adventure_works/sales_orders/" ;
+.
+
+<#sales_order> a :Resource ;
+	:identity [
+		:source_column 1 ;
+	] ;
+	:type adv:SalesOrder ;
+	:relationship
+		[ :property adv:orderDetail ; :object_from <#sales_order_detail> ]
+	;
+.
+
+<#sales_order_detail> a :Resource ;
+	:identity [ 
+		:source_column 2 ; 
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/sales_order_details/" ;
+	] ;
+	:type adv:SalesOrderDetail ;
+	:relationship
+		[ :property adv:productOrdered; :object_from <#product> ] ,
+		[ :property adv:unitPrice; :object_from <#price> ] ,
+		[ :property adv:unitPriceDiscount; :object_from <#discount> ] ,
+		[ :property adv:total; :object_from <#total> ] 
+	;		
+	:attribute
+		[ :property adv:orderQuantity; :source_column 3; :datatype xsd:integer ] 
+	;
+.
+
+<#product> a :Resource ;
+	:identity [
+		:source_column 4 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/products/" ;
+	] ;
+	:type gr:Individual ;
+.
+
+<#price> a :Resource ;
+	:identity [
+		:source_column 5 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
+	] ;
+	:type gr:UnitPriceSpecification ;
+	:attribute 
+		[ :property gr:hasCurrencyValue; :source_column 5; :datatype xsd:float ] ,
+		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
+	;
+.
+
+<#discount> a :Resource ;
+	:identity [
+		:source_column 6 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
+	] ;
+	:type gr:UnitPriceSpecification ;
+	:attribute 
+		[ :property gr:hasCurrencyValue; :source_column 6; :datatype xsd:float ] ,
+		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
+	;
+.
+
+<#total> a :Resource ;
+	:identity [
+		:source_column 7 ;
+		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
+	] ;
+	:type gr:UnitPriceSpecification ;
+	:attribute 
+		[ :property gr:hasCurrencyValue; :source_column 7; :datatype xsd:float ] ,
+		[ :property gr:hasCurrency; :value "USD" ; :datatype xsd:string ]
+	;
+.
+

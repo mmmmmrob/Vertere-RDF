@@ -9,16 +9,15 @@ geoplanet/Readme.txt
 tmp.rdf.nt
 
 ourairports.com/output_data/*
-Examples/adventureWorks/output_data/adventureworks.classes_used.txt
 
-Examples/adventureWorks/output_data/adventureworks.properties_used.txt
+Examples/adventureWorks/output_data/*
 
-Examples/adventureWorks/output_data/adventureworks.rdf.nt
-
-Examples/adventureWorks/output_data/full.rdf.nt
+Examples/adventureWorks/upload/*
 
 lib/arc2
 
 Examples/adventureWorks/AdventureWorks_2008R2_LT/.DS_Store
 
 Examples/adventureWorks/AdventureWorks_2008R2_LT/Product_header.tsv
+
+Examples/adventureWorks/upload.rb
