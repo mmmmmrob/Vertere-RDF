@@ -34,7 +34,7 @@
 	:format :TSV ;
 	:header_rows 0 ;
 	:resource <#product>, <#weight>, <#category>, <#colour>, <#offering>, <#price>, <#adventureworks> ;
-	:base_uri "http://data.kasabi.com/dataset/adventure_works/products/" ;
+	:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/products/" ;
 .
 
 <#product> a :Resource ;
@@ -58,7 +58,7 @@
 		:process ( :regex ) ;
 		:regex_match "^(.+)$";
 		:regex_output "${1}gr";
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/weights/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/weights/" ;
 	] ;
 	:type gr:QuantitativeValueFloat ;
 	:attribute 
@@ -69,7 +69,7 @@
 <#category> a :Resource ;
 	:identity [ 
 		:source_column 10 ; 
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/product_categories/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/product_categories/" ;
 	] ;
 	:type owl:Class ;
 .
@@ -80,7 +80,7 @@
 		:process ( :regex ) ;
 		:regex_match "/";
 		:regex_output "-";
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/colours/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/colours/" ;
 	] ;
 	:type owl:Thing ;
 	:attribute
@@ -91,7 +91,7 @@
 <#offering> a :Resource ;
 	:identity [
 		:source_column 1 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/offerings/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/offerings/" ;
 	] ;
 	:type gr:Offering ;
 	:attribute
@@ -119,14 +119,14 @@
 		[ :property gr:includesObject; :object_from <#product> ] ,
 		[ :property gr:hasPriceSpecification; :object_from <#price> ] ,
 		[ :property gr:hasBusinessFunction; :object gr:Sell ] ,
-		[ :property gr:offers; :subject <http://data.kasabi.com/dataset/adventure_works/companies/adventure_works> ]
+		[ :property gr:offers; :subject <http://data.kasabi.com/dataset/adventureworks-2008r2lt/companies/adventure_works> ]
 	;
 .
 
 <#price> a :Resource ;
 	:identity [
 		:source_column 6 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/prices/" ;
 	] ;
 	:type gr:UnitPriceSpecification ;
 	:attribute 

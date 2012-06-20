@@ -27,7 +27,7 @@
 	:format :TSV ;
 	:header_rows 0 ;
 	:resource <#sales_order>, <#sales_order_detail>, <#product>, <#price>, <#discount>, <#total> ;
-	:base_uri "http://data.kasabi.com/dataset/adventure_works/sales_orders/" ;
+	:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/sales_orders/" ;
 .
 
 <#sales_order> a :Resource ;
@@ -43,7 +43,7 @@
 <#sales_order_detail> a :Resource ;
 	:identity [ 
 		:source_column 2 ; 
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/sales_order_details/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/sales_order_details/" ;
 	] ;
 	:type adv:SalesOrderDetail ;
 	:relationship
@@ -60,7 +60,7 @@
 <#product> a :Resource ;
 	:identity [
 		:source_column 4 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/products/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/products/" ;
 	] ;
 	:type gr:Individual ;
 .
@@ -68,7 +68,7 @@
 <#price> a :Resource ;
 	:identity [
 		:source_column 5 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/prices/" ;
 	] ;
 	:type gr:UnitPriceSpecification ;
 	:attribute 
@@ -80,7 +80,7 @@
 <#discount> a :Resource ;
 	:identity [
 		:source_column 6 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/prices/" ;
 	] ;
 	:type gr:UnitPriceSpecification ;
 	:attribute 
@@ -92,7 +92,7 @@
 <#total> a :Resource ;
 	:identity [
 		:source_column 7 ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/prices/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/prices/" ;
 	] ;
 	:type gr:UnitPriceSpecification ;
 	:attribute 

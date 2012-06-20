@@ -21,7 +21,7 @@
 	:format :TSV ;
 	:header_rows 0 ;
 	:resource <#category> ;
-	:base_uri "http://data.kasabi.com/dataset/adventure_works/product_categories/" ;
+	:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/product_categories/" ;
 .
 
 <#category> a :Resource ;

@@ -31,13 +31,13 @@
 	:format :TSV ;
 	:header_rows 0 ;
 	:resource <#customer>, <#email>, <#phone>, <#affiliation>, <#sales_person> ;
-	:base_uri "http://data.kasabi.com/dataset/adventure_works/" ;
+	:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/" ;
 .
 
 <#customer> a :Resource ;
 	:identity [ 
 		:source_column 1 ; 
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/customers/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/customers/" ;
 	] ;
 	:type foaf:Person ;
 	:attribute
@@ -69,7 +69,7 @@
 	:identity [ 
 		:source_column 11 ;
 		:process ( :normalise );
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/phones/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/phones/" ;
 	] ;
 	:type vcard:Work ;
 	:attribute 
@@ -80,7 +80,7 @@
 	:identity [
 		:source_column 8 ;
 		:process ( :normalise :flatten_utf8 ) ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/companies/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/companies/" ;
 	] ;
 	:type foaf:Organization, gr:BusinessEntity ;
 	:attribute 
@@ -93,11 +93,11 @@
 	:identity [
 		:source_column 9 ;
 		:process ( :flatten_utf8 ) ;
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/sales_persons/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/sales_persons/" ;
 	] ;
 	:type foaf:Person ;
 	:relationship
-		[ :property schemaorg:worksFor; :object <http://data.kasabi.com/dataset/adventure_works/companies/adventure_works> ]
+		[ :property schemaorg:worksFor; :object <http://data.kasabi.com/dataset/adventureworks-2008r2lt/companies/adventure_works> ]
 	;
 .
 

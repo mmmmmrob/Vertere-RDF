@@ -21,13 +21,13 @@
 	:format :TSV ;
 	:header_rows 0 ;
 	:resource <#customer>, <#address>, <#address_type> ;
-	:base_uri "http://data.kasabi.com/dataset/adventure_works/" ;
+	:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/" ;
 .
 
 <#customer> a :Resource ;
 	:identity [ 
 		:source_column 1 ; 
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/customers/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/customers/" ;
 	] ;
 	:type foaf:Person ;
 	:relationship
@@ -38,7 +38,7 @@
 <#address> a :Resource ;
 	:identity [ 
 		:source_column 2 ; 
-		:base_uri "http://data.kasabi.com/dataset/adventure_works/addresses/" ;
+		:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/addresses/" ;
 	] ;
 	:type vcard:Address ;
 	:relationship
