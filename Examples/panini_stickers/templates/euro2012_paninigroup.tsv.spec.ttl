@@ -28,23 +28,22 @@
 .
 
 <#sticker_type> a :Resource ;
-	:identity [
-		:source_column 3 ;
-		:base_uri "http://data.kasabi.com/dataset/panini-stickers/schema/" ;
-		:process ( :regex :normalise :title_case ) ;
-		:regex_match "[() -]+";
-		:regex_output " ";
-	] ;
-	:type owl:Class ;
-	:attribute
-		[ 
-			:property rdfs:label; 
-		  	:source_column 3 ;
-			:language "en" ;
-		] 
-	;
-	:relationship
-		[ :property rdfs:subClassOf; :object panini:Sticker ]
-	;
+    :identity [
+        :source_column 3 ;
+        :base_uri "http://data.kasabi.com/dataset/panini-stickers/schema/" ;
+        :process ( :regex :normalise :title_case ) ;
+        :regex_match "[() -]+";
+        :regex_output " ";
+    ] ;
+    :type owl:Class ;
+    :attribute	[ 
+        :property rdfs:label; 
+        :source_column 3 ;
+        :language "en" ;
+    ] ;
+    :relationship [ 
+        :property rdfs:subClassOf ; 
+        :object panini:Sticker ;
+    ] ;
 .
 	
