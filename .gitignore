@@ -21,3 +21,7 @@ Examples/adventureWorks/AdventureWorks_2008R2_LT/.DS_Store
 Examples/adventureWorks/AdventureWorks_2008R2_LT/Product_header.tsv
 
 Examples/adventureWorks/upload.rb
+
+Examples/panini_stickers/upload/*
+
+Examples/panini_stickers/output_data/*

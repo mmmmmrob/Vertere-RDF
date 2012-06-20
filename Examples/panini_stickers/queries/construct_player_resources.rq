@@ -1,0 +1,16 @@
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX panini: <http://data.kasabi.com/dataset/panini-stickers/schema/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+CONSTRUCT {
+	?sticker panini:depicts ?player .
+	
+	?player a foaf:Person ;
+		foaf:name ?sticker_label ;
+	.
+} WHERE {
+	?sticker a panini:Player_sticker ;
+		rdfs:label ?sticker_label ;
+	.
+	BIND (IRI(CONCAT("http://data.kasabi.com/dataset/panini-stickers/player/", ENCODE_FOR_URI(?sticker_label))) AS ?player) .
+}

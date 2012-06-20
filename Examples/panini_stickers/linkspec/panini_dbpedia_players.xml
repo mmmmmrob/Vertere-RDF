@@ -1,0 +1,71 @@
+<Silk>
+  <Prefixes>
+    <Prefix namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#" id="rdf"></Prefix>
+    <Prefix namespace="http://dbpedia.org/ontology/" id="dbpedia"></Prefix>
+    <Prefix namespace="http://www.w3.org/2002/07/owl#" id="owl"></Prefix>
+    <Prefix namespace="http://xmlns.com/foaf/0.1/" id="foaf"></Prefix>
+    <Prefix namespace="http://www.w3.org/2000/01/rdf-schema#" id="rdfs"></Prefix>
+  </Prefixes>
+  <DataSources>
+    <DataSource type="sparqlEndpoint" id="panini_endpoint">
+      <Param name="pageSize" value="1000"></Param>
+      <Param name="pauseTime" value="0"></Param>
+      <Param name="retryCount" value="3"></Param>
+      <Param name="endpointURI" value="http://api.kasabi.com/dataset/panini-stickers/apis/sparql"></Param>
+      <Param name="retryPause" value="1000"></Param>
+      <Param name="graph" value=""></Param>
+      <Param name="login" value=""></Param>
+      <Param name="entityList" value=""></Param>
+      <Param name="password" value=""></Param>
+      <Param name="additionalParameters" value="&amp;apikey=5c8c1a8ea63cbe2176949dfe223860ad992e7913"></Param>
+    </DataSource>
+    <DataSource type="sparqlEndpoint" id="dbpedia_endpoint">
+      <Param name="pageSize" value="1000"></Param>
+      <Param name="pauseTime" value="0"></Param>
+      <Param name="retryCount" value="3"></Param>
+      <Param name="endpointURI" value="http://dbpedia.org/sparql"></Param>
+      <Param name="retryPause" value="1000"></Param>
+      <Param name="graph" value=""></Param>
+      <Param name="login" value=""></Param>
+      <Param name="entityList" value=""></Param>
+      <Param name="password" value=""></Param>
+      <Param name="additionalParameters" value=""></Param>
+    </DataSource>
+  </DataSources>
+  <Interlinks>
+    <Interlink id="panini_dbpedia_players">
+      <LinkType>owl:sameAs</LinkType>
+      <SourceDataset dataSource="panini_endpoint" var="a">
+        <RestrictTo> 
+			?a a foaf:Person . 
+		</RestrictTo>
+      </SourceDataset>
+      <TargetDataset dataSource="dbpedia_endpoint" var="b">
+        <RestrictTo>
+	 		?b a dbpedia:SoccerPlayer . 
+		</RestrictTo>
+      </TargetDataset>
+      <LinkageRule>
+        <Compare weight="1" threshold="0.1" required="true" metric="levenshteinDistance" id="unnamed_3">
+          <Input path="?a/foaf:name" id="unnamed_1"></Input>
+          <Input path="?b/foaf:name" id="unnamed_2"></Input>
+<!--
+          <Param name="minChar" value="0"></Param>
+          <Param name="maxChar" value="z"></Param>
+-->
+        </Compare>
+      </LinkageRule>
+      <Filter limit="2"></Filter>
+      <Outputs>
+        <Output type="file" minConfidence="0.95">
+          <Param name="file" value="accepted_links.nt" />
+          <Param name="format" value="ntriples" />
+        </Output>
+        <Output type="file" maxConfidence="0.95">
+          <Param name="file" value="verify_links.nt" />
+          <Param name="format" value="alignment" />
+        </Output>
+      </Outputs>
+    </Interlink>
+  </Interlinks>
+</Silk>

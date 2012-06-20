@@ -1,0 +1,50 @@
+@prefix : <http://example.com/schema/data_conversion#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix panini: <http://data.kasabi.com/dataset/panini-stickers/schema/> .
+
+<#> a :Spec ; 
+	:format :TSV ;
+	:header_rows 0 ;
+	:resource <#sticker>, <#sticker_type> ;
+	:base_uri "http://data.kasabi.com/dataset/panini-stickers/euro/2012/sticker/" ;
+.
+
+<#sticker> a :Resource ;
+    :identity [ 
+        :source_column 1 ; 
+    ] ;
+    :attribute [
+        :property rdfs:label ; 
+        :source_column 2 ;
+    ] ;
+    :relationship [ 
+        :property rdf:type ; 
+        :object_from <#sticker_type> ;
+    ] ;
+.
+
+<#sticker_type> a :Resource ;
+	:identity [
+		:source_column 3 ;
+		:base_uri "http://data.kasabi.com/dataset/panini-stickers/schema/" ;
+		:process ( :regex :normalise :title_case ) ;
+		:regex_match "[() -]+";
+		:regex_output " ";
+	] ;
+	:type owl:Class ;
+	:attribute
+		[ 
+			:property rdfs:label; 
+		  	:source_column 3 ;
+			:language "en" ;
+		] 
+	;
+	:relationship
+		[ :property rdfs:subClassOf; :object panini:Sticker ]
+	;
+.
+	

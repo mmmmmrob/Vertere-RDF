@@ -1,0 +1,98 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix panini: <http://data.kasabi.com/dataset/panini-stickers/schema/> .
+@prefix team: <http://data.kasabi.com/dataset/panini-stickers/team/> .
+@prefix schema: <http://schema.org/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# group A
+
+team:Poland a schema:SportsTeam ;
+	rdfs:label "Poland national football team"@en ;
+	skos:notation "POL" ;
+.
+
+team:Greece a schema:SportsTeam ;
+	rdfs:label "Greece national football team"@en ;
+	skos:notation "GRE" ;
+.
+
+team:Russia a schema:SportsTeam ;
+	rdfs:label "Russia national football team"@en ;
+	skos:notation "RUS" ;
+.
+
+team:CzechRepublic a schema:SportsTeam ;
+	rdfs:label "Czech Republic national football team"@en ;
+	skos:notation "CZE" ;
+.
+
+# group B
+
+team:Netherlands a schema:SportsTeam ;
+	rdfs:label "Netherlands national football team"@en ;
+	skos:notation "NED" ;
+.
+
+team:Denmark a schema:SportsTeam ;
+	rdfs:label "Denmark national football team"@en ;
+	skos:notation "DEN" ;
+.
+
+team:Germany a schema:SportsTeam ;
+	rdfs:label "Germany national football team"@en ;
+	skos:notation "GER" ;
+.
+
+team:Portugal a schema:SportsTeam ;
+	rdfs:label "Portugal national football team"@en ;
+	skos:notation "POR" ;
+.
+
+# group C
+
+team:Spain a schema:SportsTeam ;
+	rdfs:label "Spain national football team"@en ;
+	skos:notation "ESP" ;
+.
+
+team:Italy a schema:SportsTeam ;
+	rdfs:label "Italy national football team"@en ;
+	skos:notation "ITA" ;
+.
+
+team:Ireland a schema:SportsTeam ;
+	rdfs:label "Ireland national football team"@en ;
+	skos:notation "IRL" ;
+.
+
+team:Croatia a schema:SportsTeam ;
+	rdfs:label "Croatia national football team"@en ;
+	skos:notation "CRO" ;
+.
+
+# group D
+
+team:Ukraine a schema:SportsTeam ;
+	rdfs:label "Ukraine national football team"@en ;
+	skos:notation "UKR" ;
+.
+
+team:Sweden a schema:SportsTeam ;
+	rdfs:label "Sweden national football team"@en ;
+	skos:notation "SWE" ;
+.
+
+team:France a schema:SportsTeam ;
+	rdfs:label "France national football team"@en ;
+	skos:notation "FRA" ;
+.
+
+team:England a schema:SportsTeam ;
+	rdfs:label "England national football team"@en ;
+	skos:notation "ENG" ;
+.
+

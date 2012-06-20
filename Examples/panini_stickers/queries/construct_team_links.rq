@@ -1,0 +1,17 @@
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX panini: <http://data.kasabi.com/dataset/panini-stickers/schema/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX schema: <http://schema.org/> 
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+CONSTRUCT {
+	?sticker panini:depicts ?team .
+} WHERE {
+	?sticker a panini:Team_sticker_puzzle ;
+		skos:notation ?country_code ;
+	.
+	
+	?team a schema:SportsTeam ;
+		skos:notation ?country_code ;
+	.
+}

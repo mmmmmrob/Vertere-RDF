@@ -1,0 +1,19 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix panini: <http://data.kasabi.com/dataset/panini-stickers/schema/> .
+
+panini:Sticker
+	a owl:Class ;
+	rdfs:label "Sticker"@en ;
+	rdfs:comment "A generic Panini sticker"@en ;
+.
+
+panini:depicts
+	a owl:ObjectProperty ;
+	rdfs:label "depicts"@en ;
+	rdfs:label "Linking a sticker to the thing it depicts."@en ;
+	rdfs:domain panini:Sticker ;
+	rdfs:range owl:Thing ;
+.
