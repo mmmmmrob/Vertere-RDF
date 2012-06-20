@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+	"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+	<title>Vertere CSV2RDF Mapping Language</title>
+	<link rel="stylesheet" href="vertere_style.css"/>	
+</head>
+
+<body>
+
+<h1>Vertere CSV2RDF Mapping Language</h1>
+
+<p>
+	Vertere is a tool for converting data in CSV format into RDF. 
+	The Vertere mapping language described in this document uses 
+	Turtle syntax, and is designed so as to resemble to target RDF
+	graph as much as possible. Another design choice is to ensure that
+	each line in the source CSV file can be processed individually, 
+	ensuring that the conversion process can be parallelised easily.
+</p>
+
+<p>This document assumes basic knowledge of RDF and the Turtle syntax.</p>
+
+<h2>Vertere Vocabulary</h2>
+
+<p>
+	All Vertere-specific instructions are defined in the Vertere vocabulary
+	namespace, which is introduced as the base namespace at the top of the 
+	conversion document:
+</p>
+
+<pre>
+@prefix : &lt;http://example.com/schema/data_conversion#> .
+</pre>
+
+<h2>Entry Point</h2>
+
+<p>
+	The entry point to the mapping specification is a <code>:Spec</code> object 
+	(here identified as the document itself), which 
+</p>
+
+<pre>
+&lt;#> a :Spec ; 
+	:format :TSV ;
+	:header_rows 0 ;
+	:resource &lt;#customer>, &lt;#email>, &lt;#phone>, &lt;#affiliation>, &lt;#sales_person> ;
+	:base_uri "http://data.kasabi.com/dataset/adventureworks-2008r2lt/" ;
+.
+</pre>
+
+</body>
+</html>
